@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var tpl = template.Must(template.ParseFiles("index.html"))
+var tpl = template.Must(template.ParseFiles("templates/index.html"))
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Execute(w, nil)
@@ -25,3 +25,5 @@ func main() {
 	mux.HandleFunc("/", indexHandler)
 	http.ListenAndServe(":"+port, mux)
 }
+
+// https://habr.com/ru/post/475390/ сюда
