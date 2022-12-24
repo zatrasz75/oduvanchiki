@@ -1,29 +1,22 @@
 package main
 
 import (
-	"html/template"
-	"net/http"
-	"os"
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
+	"oduvanchiki/pkg"
 )
 
-var tpl = template.Must(template.ParseFiles("templates/index.html"))
+var router *gin.Engine
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	tpl.Execute(w, nil)
-}
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
+
+	router = gin.Default()
+	router.Static("/assets/", "front/")
+	router.LoadHTMLGlob("templates/*.html")
+	router.GET("/", pkg.Handler)
+	router.GET("/form", pkg.HandlerForm)
+	err := router.Run(":3737")
+	if err != nil {
+		return
 	}
-
-	mux := http.NewServeMux()
-
-	fs := http.FileServer(http.Dir("assets"))
-	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
-
-	mux.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":"+port, mux)
 }
-
-// https://habr.com/ru/post/475390/ сюда
