@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/assets/style.css">
+    <title>{{ .Title}}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
 <main>
     <header>
-        <a class="logo" href="/">News Demo</a>
+        <a class="logo" href="/form">News Demo</a>
         <form action="/search" method="GET">
             <input autofocus class="search-input" value=""
                    placeholder="Enter a news topic" type="search" name="q">

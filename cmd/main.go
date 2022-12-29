@@ -14,9 +14,13 @@ func main() {
 	router.Static("/assets/", "front/")
 	router.LoadHTMLGlob("templates/*.html")
 	router.GET("/", pkg.Handler)
-	router.GET("/form", pkg.HandlerForm)
+	router.GET("/form", pkg.GetHandlerForm)
+	router.POST("/form", pkg.PostHandlerForm)
 	err := router.Run(":3737")
 	if err != nil {
 		return
 	}
+
 }
+
+// https://www.youtube.com/watch?v=BqhjWav0MuA 7 min
