@@ -1,0 +1,27 @@
+
+{{define "base"}}
+<!doctype html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+            <!-- Ссылка на CSS стили и иконку сайта -->
+            <link rel='stylesheet' href='/static/css/style.css'>
+        <title>{{template "title" .}} - Snippetbox</title>
+    </head>
+
+    <body>
+        <header>
+            <h1><a href='/form'>Snippetbox</a></h1>
+        </header>
+        <nav>
+            <a href='/'>Домашняя страница</a>
+        </nav>
+
+        <main>
+            {{template "main" .}}
+        </main>
+        <!-- Вызываем шаблон подвала -->
+        {{template "footer" .}}
+    </body>
+</html>
+{{end}}
