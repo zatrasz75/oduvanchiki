@@ -1,18 +1,32 @@
-package main
+package pkg
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 )
+
+type ViewData struct {
+	Title string
+	Users []string
+}
+type FormData struct {
+	Id          string
+	Question    string
+	AnswerTrue  string
+	AnswerFals1 string
+	AnswerFals2 string
+	AnswerFals3 string
+}
 
 // Используем функцию template.ParseFiles() для чтения файлов шаблона.
 var (
 	tmpl = template.Must(template.ParseFiles("./ui/html/form.html"))
 )
 
-// Обработчик главной страницы.
-func home(w http.ResponseWriter, r *http.Request) {
+// Home Обработчик главной страницы.
+func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -41,8 +55,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Обработчик отображение страницы с формой
-func formPage(w http.ResponseWriter, r *http.Request) {
+// FormPage Обработчик отображение страницы с формой
+func FormPage(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/form" {
 		http.NotFound(w, r)
 		return
@@ -51,7 +65,6 @@ func formPage(w http.ResponseWriter, r *http.Request) {
 		Title: "Одуванчики",
 		Users: []string{"Krex", "Pex", "Fex"},
 	}
-
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
@@ -62,12 +75,21 @@ func formPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Обработчик сохранения данных страницы с формой
-func formSave(w http.ResponseWriter, r *http.Request) {
+// FormSave Обработчик сохранения данных страницы с формой
+func FormSave(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/form" {
 		http.NotFound(w, r)
 		return
 	}
+	f := FormData{
+		Id:          r.FormValue("Id"),
+		AnswerTrue:  r.FormValue("AnswerTrue"),
+		AnswerFals1: r.FormValue("AnswerFals1"),
+		AnswerFals2: r.FormValue("AnswerFals2"),
+		AnswerFals3: r.FormValue("AnswerFals3"),
+	}
+	fmt.Println(f)
+	//	fmt.Println(counter)
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.

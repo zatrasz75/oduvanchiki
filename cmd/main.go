@@ -5,13 +5,9 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"oduvanchiki/pkg"
 	"os"
 )
-
-type ViewData struct {
-	Title string
-	Users []string
-}
 
 // Инициализируем FileServer, он будет обрабатывать
 // HTTP-запросы к статическим файлам из папки "./ui/static".
@@ -31,9 +27,9 @@ func main() {
 	router := mux.NewRouter()
 	//	mux := http.NewServeMux()
 
-	router.HandleFunc("/", home).Methods("GET")
-	router.HandleFunc("/form", formPage).Methods("GET")
-	router.HandleFunc("/form", formSave).Methods("POST")
+	router.HandleFunc("/", pkg.Home).Methods("GET")
+	router.HandleFunc("/form", pkg.FormPage).Methods("GET")
+	router.HandleFunc("/form", pkg.FormSave).Methods("POST")
 
 	// Обработка всех url будет происходить через router
 	http.Handle("/", router)
