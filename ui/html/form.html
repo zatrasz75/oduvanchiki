@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/css/style.css">
-    <title>Одуванчики</title>
+    <title>{{ .Title}}</title>
 </head>
 <body>
 
-    <a href="/">На главную</a>
+   <h3><a href="/">На главную</a></h3>
     <div>
 {{/*        {{range .data}}*/}}
 
 {{/*            {{ .Login}} {{ .Password}}*/}}
 
 {{/*        {{end}}*/}}
+        <ul>
+            {{range .Users}}
+                <li><b>{{ . }}</b></li>
+            {{end}}
+        </ul>
     </div>
 
 <form method="post">
