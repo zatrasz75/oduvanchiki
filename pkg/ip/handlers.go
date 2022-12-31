@@ -22,7 +22,7 @@ type FormData struct {
 
 // Используем функцию template.ParseFiles() для чтения файлов шаблона.
 var (
-	tmpl = template.Must(template.ParseFiles("./ui/html/form.html"))
+	tmpl = template.Must(template.ParseFiles("./static/html/form.html"))
 )
 
 // Home Обработчик главной страницы.
@@ -34,9 +34,9 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	// Инициализируем срез содержащий пути к трем файлам. Обратите внимание, что
 	// файл home.page.tmpl должен быть *первым* файлом в срезе.
 	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
+		"./static/html/home.page.tmpl",
+		"./static/html/base.layout.tmpl",
+		"./static/html/footer.partial.tmpl",
 	}
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles(files...)
@@ -89,7 +89,7 @@ func FormSave(w http.ResponseWriter, r *http.Request) {
 		AnswerFals3: r.FormValue("AnswerFals3"),
 	}
 	fmt.Println(f)
-	//	fmt.Println(counter)
+
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
