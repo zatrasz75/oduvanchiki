@@ -5,14 +5,14 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"oduvanchiki/pkg"
+	"oduvanchiki/pkg/ip"
 	"os"
 )
 
 // Инициализируем FileServer, он будет обрабатывать
 // HTTP-запросы к статическим файлам из папки "./ui/static".
 var (
-	fs = http.FileServer(http.Dir("./ui/static/"))
+	fs = http.FileServer(http.Dir("./static/"))
 )
 
 func main() {
@@ -27,9 +27,9 @@ func main() {
 	router := mux.NewRouter()
 	//	mux := http.NewServeMux()
 
-	router.HandleFunc("/", pkg.Home).Methods("GET")
-	router.HandleFunc("/form", pkg.FormPage).Methods("GET")
-	router.HandleFunc("/form", pkg.FormSave).Methods("POST")
+	router.HandleFunc("/", ip.Home).Methods("GET")
+	router.HandleFunc("/form", ip.FormPage).Methods("GET")
+	router.HandleFunc("/form", ip.FormSave).Methods("POST")
 
 	// Обработка всех url будет происходить через router
 	http.Handle("/", router)
