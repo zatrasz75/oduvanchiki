@@ -14,12 +14,18 @@
 {{/*            {{ .Login}} {{ .Password}}*/}}
 
 {{/*        {{end}}*/}}
+
+
         <ul>
             {{range .Users}}
                 <li><b>{{ . }}</b></li>
             {{end}}
         </ul>
     </div>
+
+{{/*   <div>*/}}
+{{/*<h2>{{ .Model}}</h2>*/}}
+{{/*   </div>*/}}
 
 <form method="post">
 <div class="form">
@@ -35,6 +41,5 @@
 </div>
 </form>
 
-{{/*<script src="/assets/js/registration.js"></script>*/}}
 </body>
 </html>

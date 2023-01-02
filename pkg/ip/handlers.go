@@ -5,12 +5,14 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"oduvanchiki/pkg/db"
 )
 
 type ViewData struct {
 	Title string
 	Users []string
 }
+
 type FormData struct {
 	Id          string
 	Question    string
@@ -63,7 +65,7 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 	}
 	data := ViewData{
 		Title: "Одуванчики",
-		Users: []string{"Krex", "Pex", "Fex"},
+		Users: []string{"Krex", "Pex", "Fex", "FormPage"},
 	}
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
@@ -88,12 +90,48 @@ func FormSave(w http.ResponseWriter, r *http.Request) {
 		AnswerFals2: r.FormValue("AnswerFals2"),
 		AnswerFals3: r.FormValue("AnswerFals3"),
 	}
-	fmt.Println(f)
+
+	data := ViewData{
+		Title: "Одуванчики",
+		Users: []string{"Krex", "Pex", "Fex"},
+	}
+	if f.AnswerTrue == "Krex" {
+		fmt.Println(f)
+	}
+	//	fmt.Println(f)
 
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err := tmpl.Execute(w, nil)
+	err := tmpl.Execute(w, data)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "внутренняя ошибка сервера", 500)
+	}
+}
+
+// Обработчик отображение страницы с формой
+func DisplayData(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/form" {
+		http.NotFound(w, r)
+		return
+	}
+	//data := ViewData{
+	//	Title: "Одуванчики",
+	//	Users: []string{"Krex", "Pex", "Fex", "DisplayData"},
+	//}
+	a := db.RowDB(15)
+	disp := db.Product{
+		Id:      a.Id,
+		Model:   a.Model,
+		Company: a.Company,
+		Price:   a.Price,
+	}
+	fmt.Println(disp)
+	// Затем мы используем метод Execute() для записи содержимого
+	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
+	// возможность отправки динамических данных в шаблон.
+	err := tmpl.Execute(w, disp)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "внутренняя ошибка сервера", 500)
