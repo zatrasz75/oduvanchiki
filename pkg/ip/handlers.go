@@ -67,6 +67,16 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 		Title: "Одуванчики",
 		Users: []string{"Krex", "Pex", "Fex", "FormPage"},
 	}
+
+	a := db.RowDB(13)
+	disp := db.Product{
+		Id:      a.Id,
+		Model:   a.Model,
+		Company: a.Company,
+		Price:   a.Price,
+	}
+	fmt.Println(disp)
+
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
@@ -93,7 +103,7 @@ func FormSave(w http.ResponseWriter, r *http.Request) {
 
 	data := ViewData{
 		Title: "Одуванчики",
-		Users: []string{"Krex", "Pex", "Fex"},
+		Users: []string{"Krex", "Pex", "Fex", "upssssss", "FormSave"},
 	}
 	if f.AnswerTrue == "Krex" {
 		fmt.Println(f)
@@ -110,17 +120,17 @@ func FormSave(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Обработчик отображение страницы с формой
+// DisplayData Обработчик отображение страницы с формой
 func DisplayData(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/form" {
 		http.NotFound(w, r)
 		return
 	}
-	//data := ViewData{
-	//	Title: "Одуванчики",
-	//	Users: []string{"Krex", "Pex", "Fex", "DisplayData"},
-	//}
-	a := db.RowDB(15)
+	data := ViewData{
+		Title: "Одуванчики",
+		Users: []string{"Krex", "Pex", "Fex", "DisplayData"},
+	}
+	a := db.RowDB(13)
 	disp := db.Product{
 		Id:      a.Id,
 		Model:   a.Model,
@@ -131,7 +141,7 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err := tmpl.Execute(w, disp)
+	err := tmpl.Execute(w, data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "внутренняя ошибка сервера", 500)

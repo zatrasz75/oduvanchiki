@@ -18,7 +18,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "759704"
-	dbname   = "productdb"
+	dbname   = "productdb" // Dandelions
 )
 
 var (
