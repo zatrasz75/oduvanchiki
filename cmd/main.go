@@ -35,9 +35,6 @@ func main() {
 	router.HandleFunc("/form", ip.FormSave).Methods("POST")
 	//	router.HandleFunc("/form", ip.DisplayData).Methods("GET")
 
-	// Обработка всех url будет происходить через router
-	http.Handle("/", router)
-
 	log.Print("Запуск сервера на http://127.0.0.1", PORT)
 	err := http.ListenAndServe(PORT, router)
 	log.Fatal(err)
