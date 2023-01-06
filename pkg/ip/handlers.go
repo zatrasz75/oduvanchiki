@@ -68,14 +68,18 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 		Users: []string{"Krex", "Pex", "Fex", "FormPage"},
 	}
 
-	a := db.RowDB(13)
-	disp := db.Product{
-		Id:      a.Id,
-		Model:   a.Model,
-		Company: a.Company,
-		Price:   a.Price,
+	a := db.RowDB(1)
+	disp := db.Quiestions{
+		Id:       a.Id,
+		Question: a.Question,
 	}
-	fmt.Println(disp)
+	fmt.Println(disp.Id, disp.Question)
+
+	ups := db.SelectDB()
+	fmt.Println(ups)
+	for _, s := range ups {
+		fmt.Println(s.Id, s.Question)
+	}
 
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
@@ -130,12 +134,10 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 		Title: "Одуванчики",
 		Users: []string{"Krex", "Pex", "Fex", "DisplayData"},
 	}
-	a := db.RowDB(13)
-	disp := db.Product{
-		Id:      a.Id,
-		Model:   a.Model,
-		Company: a.Company,
-		Price:   a.Price,
+	a := db.RowDB(1)
+	disp := db.Quiestions{
+		Id:       a.Id,
+		Question: a.Question,
 	}
 	fmt.Println(disp)
 	// Затем мы используем метод Execute() для записи содержимого
