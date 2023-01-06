@@ -9,8 +9,8 @@ import (
 )
 
 type ViewData struct {
-	Title string
-	Users []string
+	Title   string
+	Answers []string
 }
 
 type FormData struct {
@@ -63,22 +63,40 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	var strId = 3
+
+	q := db.QuiestionOneDB(strId)
+	quieast := db.Quiestions{
+		Id:       q.Id,
+		Question: q.Question,
+	}
+	fmt.Println(quieast.Id, quieast.Question)
+
+	a := db.AnswerOneDB(strId)
+	answer := db.Answer{
+		Id:      a.Id,
+		Answer1: a.Answer1,
+		Answer2: a.Answer2,
+		Answer3: a.Answer3,
+		Answer4: a.Answer4,
+	}
+	fmt.Println(answer.Id, answer.Answer1, answer.Answer2, answer.Answer3, answer.Answer4)
+
 	data := ViewData{
-		Title: "Одуванчики",
-		Users: []string{"Krex", "Pex", "Fex", "FormPage"},
+		Title:   "Одуванчики",
+		Answers: []string{quieast.Question, answer.Answer1, answer.Answer2, answer.Answer3, answer.Answer4},
 	}
 
-	a := db.RowDB(1)
-	disp := db.Quiestions{
-		Id:       a.Id,
-		Question: a.Question,
-	}
-	fmt.Println(disp.Id, disp.Question)
+	fmt.Println(quieast, answer)
 
-	ups := db.SelectDB()
-	fmt.Println(ups)
-	for _, s := range ups {
+	quiest := db.SelectQuiestDB()
+	for _, s := range quiest {
 		fmt.Println(s.Id, s.Question)
+	}
+
+	answ := db.AnswersDB()
+	for _, s := range answ {
+		fmt.Println(s.Id, s.Answer1, s.Answer2, s.Answer3, s.Answer4)
 	}
 
 	// Затем мы используем метод Execute() для записи содержимого
@@ -106,8 +124,8 @@ func FormSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := ViewData{
-		Title: "Одуванчики",
-		Users: []string{"Krex", "Pex", "Fex", "upssssss", "FormSave"},
+		Title:   "Одуванчики",
+		Answers: []string{"Krex", "Pex", "Fex", "upssssss", "FormSave"},
 	}
 	if f.AnswerTrue == "Krex" {
 		fmt.Println(f)
@@ -131,10 +149,10 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := ViewData{
-		Title: "Одуванчики",
-		Users: []string{"Krex", "Pex", "Fex", "DisplayData"},
+		Title:   "Одуванчики",
+		Answers: []string{"Krex", "Pex", "Fex", "DisplayData"},
 	}
-	a := db.RowDB(1)
+	a := db.QuiestionOneDB(1)
 	disp := db.Quiestions{
 		Id:       a.Id,
 		Question: a.Question,

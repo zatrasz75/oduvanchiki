@@ -11,6 +11,14 @@ type Quiestions struct {
 	Question string
 }
 
+type Answer struct {
+	Id      int
+	Answer1 string
+	Answer2 string
+	Answer3 string
+	Answer4 string
+}
+
 const (
 	host     = "localhost"
 	port     = 5432
@@ -24,8 +32,8 @@ var (
 	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 )
 
-// RowDB Получение данных из БД по 1 записи
-func RowDB(id int) Quiestions {
+// QuiestionDB Получение 1 записи из таблицы quiestions
+func QuiestionOneDB(id int) Quiestions {
 	// Открываем БД
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -49,8 +57,8 @@ func RowDB(id int) Quiestions {
 	return prod
 }
 
-// SelectDB Получение данных из БД
-func SelectDB() []Quiestions {
+// SelectQuiestDB Получение всех записей из таблицы quiestions
+func SelectQuiestDB() []Quiestions {
 	// Открываем БД
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -78,4 +86,63 @@ func SelectDB() []Quiestions {
 	}
 
 	return data
+}
+
+// AnswersDB Получение всех записей из таблицы answer
+func AnswersDB() []Answer {
+	// Открываем БД
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	// Закрытие БД
+	defer db.Close()
+	// Контроль БД
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := db.Query("select *from answer")
+	if err != nil {
+		panic(err)
+	}
+
+	data := []Answer{}
+
+	for rows.Next() {
+		p := Answer{}
+		err := rows.Scan(&p.Id, &p.Answer1, &p.Answer2, &p.Answer3, &p.Answer4)
+		if err != nil {
+			panic(err)
+		}
+		data = append(data, p)
+	}
+
+	return data
+}
+
+// AnswerOneDB Получение 1 записи из таблицы answer
+func AnswerOneDB(id int) Answer {
+	// Открываем БД
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	// Закрытие БД
+	defer db.Close()
+	// Контроль БД
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	row := db.QueryRow("select * from answer where id = $1", id)
+	prod := Answer{}
+	err = row.Scan(&prod.Id, &prod.Answer1, &prod.Answer2, &prod.Answer3, &prod.Answer4)
+	if err != nil {
+		panic(err)
+	}
+
+	return prod
 }
