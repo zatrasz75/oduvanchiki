@@ -33,7 +33,7 @@ func main() {
 	router.HandleFunc("/", ip.Home).Methods("GET")
 	router.HandleFunc("/form", ip.FormPage).Methods("GET")
 	router.HandleFunc("/form", ip.FormSave).Methods("POST")
-	router.HandleFunc("/form", ip.DisplayData).Methods("GET")
+	//router.HandleFunc("/form", ip.DisplayData).Methods("GET")
 
 	log.Print("Запуск сервера на http://127.0.0.1", PORT)
 	err := http.ListenAndServe(PORT, router)

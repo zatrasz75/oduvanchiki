@@ -12,11 +12,12 @@ type Quiestions struct {
 }
 
 type Answer struct {
-	Id      int
-	Answer1 string
-	Answer2 string
-	Answer3 string
-	Answer4 string
+	Id          int
+	Answer1     string
+	Answer2     string
+	Answer3     string
+	Answer4     string
+	QuiestionId string // Необходимо вставить Id из структуры Quiestions
 }
 
 const (
@@ -58,7 +59,7 @@ func QuiestionOneDB(id int) Quiestions {
 }
 
 // SelectQuiestDB Получение всех записей из таблицы quiestions
-func SelectQuiestDB() []Quiestions {
+func QuiestDB() []Quiestions {
 	// Открываем БД
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -112,7 +113,7 @@ func AnswersDB() []Answer {
 
 	for rows.Next() {
 		p := Answer{}
-		err := rows.Scan(&p.Id, &p.Answer1, &p.Answer2, &p.Answer3, &p.Answer4)
+		err := rows.Scan(&p.Id, &p.Answer1, &p.Answer2, &p.Answer3, &p.Answer4, &p.QuiestionId)
 		if err != nil {
 			panic(err)
 		}
@@ -139,7 +140,7 @@ func AnswerOneDB(id int) Answer {
 
 	row := db.QueryRow("select * from answer where id = $1", id)
 	prod := Answer{}
-	err = row.Scan(&prod.Id, &prod.Answer1, &prod.Answer2, &prod.Answer3, &prod.Answer4)
+	err = row.Scan(&prod.Id, &prod.Answer1, &prod.Answer2, &prod.Answer3, &prod.Answer4, &prod.QuiestionId)
 	if err != nil {
 		panic(err)
 	}

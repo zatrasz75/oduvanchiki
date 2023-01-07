@@ -9,8 +9,13 @@ import (
 )
 
 type ViewData struct {
-	Title   string
-	Answers []string
+	Title    string
+	Answers  []string
+	Question string
+	Answer1  string
+	Answer2  string
+	Answer3  string
+	Answer4  string
 }
 
 type FormData struct {
@@ -63,40 +68,31 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	var strId = 3
+	var strId = 1
+	slId := make([]int, 0, 60)
 
-	q := db.QuiestionOneDB(strId)
-	quieast := db.Quiestions{
-		Id:       q.Id,
-		Question: q.Question,
-	}
-	fmt.Println(quieast.Id, quieast.Question)
-
-	a := db.AnswerOneDB(strId)
-	answer := db.Answer{
-		Id:      a.Id,
-		Answer1: a.Answer1,
-		Answer2: a.Answer2,
-		Answer3: a.Answer3,
-		Answer4: a.Answer4,
-	}
-	fmt.Println(answer.Id, answer.Answer1, answer.Answer2, answer.Answer3, answer.Answer4)
-
-	data := ViewData{
-		Title:   "Одуванчики",
-		Answers: []string{quieast.Question, answer.Answer1, answer.Answer2, answer.Answer3, answer.Answer4},
-	}
-
-	fmt.Println(quieast, answer)
-
-	quiest := db.SelectQuiestDB()
+	quiest := db.QuiestDB()
 	for _, s := range quiest {
 		fmt.Println(s.Id, s.Question)
+		slId = append(slId, s.Id)
 	}
+	fmt.Println(slId) // Массив из ID нид сделать из него рандом и записать в strId
 
 	answ := db.AnswersDB()
 	for _, s := range answ {
 		fmt.Println(s.Id, s.Answer1, s.Answer2, s.Answer3, s.Answer4)
+	}
+
+	q := db.QuiestionOneDB(strId)
+	a := db.AnswerOneDB(strId)
+
+	data := ViewData{
+		Title:    "Одуванчики",
+		Question: q.Question,
+		Answer1:  a.Answer1,
+		Answer2:  a.Answer2,
+		Answer3:  a.Answer3,
+		Answer4:  a.Answer4,
 	}
 
 	// Затем мы используем метод Execute() для записи содержимого
