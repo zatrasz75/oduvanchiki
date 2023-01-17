@@ -33,7 +33,7 @@ var (
 	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 )
 
-// QuiestionDB Получение 1 записи из таблицы quiestions
+// QuiestionOneDB QuiestionDB Получение 1 записи из таблицы quiestions
 func QuiestionOneDB(id int) Quiestions {
 	// Открываем БД
 	db, err := sql.Open("postgres", connStr)
@@ -41,7 +41,12 @@ func QuiestionOneDB(id int) Quiestions {
 		panic(err)
 	}
 	// Закрытие БД
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
 	// Контроль БД
 	err = db.Ping()
 	if err != nil {
@@ -58,7 +63,7 @@ func QuiestionOneDB(id int) Quiestions {
 	return prod
 }
 
-// SelectQuiestDB Получение всех записей из таблицы quiestions
+// QuiestDB Получение всех записей из таблицы quiestions
 func QuiestDB() []Quiestions {
 	// Открываем БД
 	db, err := sql.Open("postgres", connStr)
@@ -66,7 +71,12 @@ func QuiestDB() []Quiestions {
 		panic(err)
 	}
 	// Закрытие БД
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
 	// Контроль БД
 	err = db.Ping()
 
@@ -75,7 +85,7 @@ func QuiestDB() []Quiestions {
 		panic(err)
 	}
 
-	data := []Quiestions{}
+	var data []Quiestions
 
 	for rows.Next() {
 		p := Quiestions{}
@@ -97,7 +107,12 @@ func AnswersDB() []Answer {
 		panic(err)
 	}
 	// Закрытие БД
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
 	// Контроль БД
 	err = db.Ping()
 	if err != nil {
@@ -109,7 +124,7 @@ func AnswersDB() []Answer {
 		panic(err)
 	}
 
-	data := []Answer{}
+	var data []Answer
 
 	for rows.Next() {
 		p := Answer{}
@@ -131,7 +146,12 @@ func AnswerOneDB(id int) Answer {
 		panic(err)
 	}
 	// Закрытие БД
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
 	// Контроль БД
 	err = db.Ping()
 	if err != nil {

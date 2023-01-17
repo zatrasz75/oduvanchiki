@@ -38,4 +38,5 @@ func main() {
 	log.Print("Запуск сервера на http://127.0.0.1", PORT)
 	err := http.ListenAndServe(PORT, router)
 	log.Fatal(err)
+
 }

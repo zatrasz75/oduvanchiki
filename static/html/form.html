@@ -8,19 +8,19 @@
 <body>
 
    <h3><a href="/">На главную</a></h3>
-    <div>
+{{/*    <div>*/}}
 {{/*        {{range .data}}*/}}
 
 {{/*            {{ .Login}} {{ .Password}}*/}}
 
 {{/*        {{end}}*/}}
 
-        <ul>
-            {{range .Answers}}
-                <li><b>{{ . }}</b></li>
-            {{end}}
-        </ul>
-    </div>
+{{/*        <ul>*/}}
+{{/*            {{range .Answers}}*/}}
+{{/*                <li><b>{{ . }}</b></li>*/}}
+{{/*            {{end}}*/}}
+{{/*        </ul>*/}}
+{{/*    </div>*/}}
 
 {{/*   <div>*/}}
 {{/*<h2>{{ .Model}}</h2>*/}}
@@ -28,7 +28,7 @@
 
 <form method="post">
 <div class="form">
-    <input type="text" name="Id" placeholder="id">
+    <input type="text" name="Id" placeholder="{{.Id}}">
     <input type="text" name="Question" placeholder="{{.Question}}">
     <input type="text" name="Answer" placeholder="{{.Answer1}}">
     <input type="text" name="Answer" placeholder="{{.Answer2}}">
