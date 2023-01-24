@@ -53,7 +53,7 @@ func QuiestionOneDB(id int) Quiestions {
 		panic(err)
 	}
 
-	row := db.QueryRow("select * from quiestions where id = $1", id)
+	row := db.QueryRow("select *from quiestions where id = $1", id)
 	prod := Quiestions{}
 	err = row.Scan(&prod.Id, &prod.Question)
 	if err != nil {

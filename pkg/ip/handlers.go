@@ -10,7 +10,7 @@ import (
 )
 
 type ViewData struct {
-	Title    string
+	User     string
 	Id       int
 	Question string
 	Answer1  string
@@ -28,12 +28,9 @@ type FormData struct {
 	Answer4  string
 }
 
-// Используем функцию template.ParseFiles() для чтения файлов шаблона.
-//var (
-//	tmpl = template.Must(template.ParseFiles("./static/html/index.html"))
-//)
-
-//var tpl = template.Must(template.ParseFiles("./static/html/index.html"))
+type NameUser struct {
+	Name string
+}
 
 // Home Обработчик главной страницы.
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +43,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
 		log.Println(err.Error())
-		http.Error(w, "ups внутренняя ошибка сервера", 500)
+		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
 	// Затем мы используем метод Execute() для записи содержимого
@@ -55,17 +52,43 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	err = ts.Execute(w, nil)
 	if err != nil {
 		log.Println(err.Error())
-		http.Error(w, "внутренняя ошибка сервера", 500)
+		//http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
 }
 
-// NamePage Обработчик отображение страницы с формой
+// NamePage Обработчик отображение страницы с формой ввода имени.
 func NamePage(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/name" {
 		http.NotFound(w, r)
 		return
 	}
+
+	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
+	ts, err := template.ParseFiles("./templates/name.html")
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
+		return
+	}
+
+	// Затем мы используем метод Execute() для записи содержимого
+	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
+	// возможность отправки динамических данных в шаблон.
+	err = ts.Execute(w, nil)
+	if err != nil {
+		log.Println(err.Error())
+		//http.Error(w, "внутренняя ошибка сервера", 500)
+	}
+}
+
+// NextTest Обработчик отображение страницы с формой
+func NextTest(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/next_test" {
+		http.NotFound(w, r)
+		return
+	}
 	var strId int
+	var conclusion []ViewData
 
 	quiest := db.QuiestDB()
 	strId = randomId(quiest, strId)
@@ -73,8 +96,13 @@ func NamePage(w http.ResponseWriter, r *http.Request) {
 	q := db.QuiestionOneDB(strId)
 	a := db.AnswerOneDB(strId)
 
+	user := NameUser{
+		Name: r.FormValue("name"),
+	}
+	//	fmt.Println(user)
+
 	data := ViewData{
-		Title:    "Одуванчики",
+		User:     user.Name,
 		Id:       q.Id,
 		Question: q.Question,
 		Answer1:  a.Answer1,
@@ -82,53 +110,25 @@ func NamePage(w http.ResponseWriter, r *http.Request) {
 		Answer3:  a.Answer3,
 		Answer4:  a.Answer4,
 	}
+	fmt.Println(data)
 
-	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
-	ts, err := template.ParseFiles("./templates/name.html")
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "ups внутренняя ошибка сервера", 500)
-		return
-	}
-
-	// Затем мы используем метод Execute() для записи содержимого
-	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
-	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, data)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "внутренняя ошибка сервера", 500)
-	}
-}
-
-// DisplayData Обработчик отображение страницы с формой
-func NextTest(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/next_test" {
-		http.NotFound(w, r)
-		return
-	}
-
-	a := db.QuiestionOneDB(1)
-	disp := db.Quiestions{
-		Id:       a.Id,
-		Question: a.Question,
-	}
-	fmt.Println(disp)
+	conclusion = append(conclusion, data)
+	//	fmt.Println(conclusion)
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/next_test.html")
 	if err != nil {
 		log.Println(err.Error())
-		http.Error(w, "ups внутренняя ошибка сервера", 500)
+		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, nil)
+	err = ts.Execute(w, conclusion)
 	if err != nil {
 		log.Println(err.Error())
-		http.Error(w, "внутренняя ошибка сервера", 500)
+		//	http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
 }
 
@@ -171,7 +171,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 //	err := tmpl.Execute(w, data)
 //	if err != nil {
 //		log.Println(err.Error())
-//		http.Error(w, "внутренняя ошибка сервера", 500)
+//		http.Error(w, "Внутренняя ошибка сервера", 500)
 //	}
 //}
 
@@ -182,7 +182,7 @@ func randomId(quiest []db.Quiestions, strId int) int {
 	for _, s := range quiest {
 		sl = append(sl, s.Id)
 	}
-	fmt.Println(sl)
+	//	fmt.Println(sl)
 
 	return strId + sl[0]
 }

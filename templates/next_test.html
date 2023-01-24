@@ -9,7 +9,20 @@
     <title>Document</title>
 </head>
 <body>
-    <form class="NAME_LOGO" action="./name">
+
+{{range .}}
+
+        <p>{{.Id}}</p>
+        <p>{{.User}}</p>
+        <p>{{.Question}}</p>
+        <p>{{.Answer1}}</p>
+        <p>{{.Answer2}}</p>
+        <p>{{.Answer3}}</p>
+        <p>{{.Answer4}}</p>
+
+{{end}}
+
+    <form class="NAME_LOGO" action="./next_test">
         <div class="Name-logo">
             <img src="./static/img/Иконка _Лого_ (1).svg">
             <a href="./"><img src="./static/img/Vector (4).jpg"></a>

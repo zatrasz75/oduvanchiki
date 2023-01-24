@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	ip "oduvanchiki/pkg/ip"
+	"oduvanchiki/pkg/ip"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,8 +32,8 @@ func main() {
 	}
 
 	router.HandleFunc("/", ip.Home).Methods("GET")
-	router.HandleFunc("/name", ip.NamePage).Methods("GET")
-	router.HandleFunc("/next_test", ip.NextTest).Methods("GET")
+	router.HandleFunc("/name", ip.NamePage)
+	router.HandleFunc("/next_test", ip.NextTest)
 	//router.HandleFunc("/", ip.DisplayData).Methods("GET")
 
 	log.Print("Запуск сервера на http://127.0.0.1", PORT)
@@ -60,6 +60,6 @@ func graceShutdown(srv *http.Server) {
 	if err != nil {
 		return
 	}
-	log.Printf("Выключение")
+	log.Printf("Выключение сервера")
 	os.Exit(0)
 }
