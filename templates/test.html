@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./static/css/style.css" rel="stylesheet" type="text/css">
+    <link href="./static/css/test.css" rel="stylesheet" type="text/css">
+    <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
+    <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
+    <title>Dandelions</title>
+</head>
+<body>
+<header class="header" di="HOME">
+    <div class="section">
+        <div class="section-header">
+            <div class="logo">
+                <img src="./static/img/Иконка _Лого_ (1).svg">
+            </div>
+            <nav>
+                <ul class="header-nav">
+                    <li><a class="link" href="#ADVAN_TEST">Преимущества теста</a></li>
+                    <li><a class="link" href="#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                    <li><a class="link" href="#">Свяжитесь с нами</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <form class="quiz-box" id="quiz" action="./test" method="post">
+        {{range .}}
+    <div class="quiz-box" id="quiz">
+        <div class="quiz-header">
+            <h2 id="question">{{.Question}}</h2>
+            <ul>
+                <li>
+                    <input type="hidden" value="{{.User}}" name="name">
+                </li>
+
+                <li>
+                    <input type="hidden" value="{{.Question}}" name="question">
+                </li>
+                <li>
+                    <input type="radio" value="{{.Answer1}}" name="answer" id="a" class="answer" onchange="document.getElementById('submit').disabled = !this.checked;">
+                    <label for="a" id="a_text">{{.Answer1}}</label>
+                </li>
+                <li>
+                    <input type="radio" value="{{.Answer2}}" name="answer" id="b" class="answer" onchange="document.getElementById('submit').disabled = !this.checked;">
+                    <label for="b" id="b_text">{{.Answer2}}</label>
+                </li>
+                <li>
+                    <input type="radio" value="{{.Answer3}}"  name="answer" id="c" class="answer" onchange="document.getElementById('submit').disabled = !this.checked;">
+                    <label for="c" id="c_text">{{.Answer3}}</label>
+                </li>
+                <li>
+                    <input type="radio" value="{{.Answer4}}" name="answer" id="d" class="answer" onchange="document.getElementById('submit').disabled = !this.checked;">
+                    <label for="d" id="d_text">{{.Answer4}}</label>
+                </li>
+            </ul>
+        </div>
+        <div class="button-test">
+            <button class="button test_button" id="submit" disabled>Проверить ответ</button>
+        </div>
+    </div>
+        {{end}}
+    </form>
+</header>
+<footer class="FOOTER">
+    <div class="section">
+        <div class="section-footer">
+            <div class="footer-logo">
+                <img src="./static/img/Vector (3).svg">
+                <p class="footer-logo-p">© Vorobey English 2023</p>
+                <p class="footer-logo-p2">Все права защищены</p>
+            </div>
+            <div class="footer-navi">
+                <nav>
+                    <ul class="footer-nav">
+                        <li><a class="footer-link" href="#HOME">Преимущества теста</a></li>
+                        <li><a class="footer-link" href="#HOME">Уровни знания языка</a></li>
+                        <li><a class="footer-link" href="#HOME">Свяжитесь с нами</a></li>
+                    </ul>
+                </nav>
+                <p><a class="footer-link" href="mailto:englishtest@yandex.ru">englishtest@yandex.ru</a></p>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+</body>
+
+</html>

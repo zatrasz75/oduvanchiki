@@ -1,0 +1,47 @@
+body {
+    max-width: 1366px;
+    max-height: 825px;
+    /* background-color: #C5C5C5; */
+}
+
+.header {
+
+}
+
+.quiz-box {
+    margin: 146px 0 0 135px
+}
+
+.quiz-header ul {
+    line-height: 24px;
+    width: 214px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 35px;
+    list-style-type: none;
+}
+
+.quiz-header {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.quiz-header h2 {
+    margin-bottom: 40px;
+}
+
+.button-test {
+    margin: 17px 0 47px 0;
+
+}
+
+.test_button {
+    background: #4F68BB;
+    color:#FFFFFF;
+    cursor: pointer;
+}

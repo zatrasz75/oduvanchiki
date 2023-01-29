@@ -32,9 +32,9 @@ func main() {
 	}
 
 	router.HandleFunc("/", ip.Home).Methods("GET")
-	router.HandleFunc("/name", ip.NamePage)
-	router.HandleFunc("/next_test", ip.NextTest)
-	//router.HandleFunc("/", ip.DisplayData).Methods("GET")
+	router.HandleFunc("/name", ip.NamePage).Methods("GET")
+	router.HandleFunc("/next_test", ip.NextTest).Methods("POST")
+	router.HandleFunc("/test", ip.FormTest).Methods("POST")
 
 	log.Print("Запуск сервера на http://127.0.0.1", PORT)
 

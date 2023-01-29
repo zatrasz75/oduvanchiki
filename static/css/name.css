@@ -16,7 +16,8 @@ body {
     height: 602px;
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -55%);
-    box-shadow: 0px 0px 25px
+    box-shadow: 0px 0px 25px;
+    background-color: #FEF6F3;
 }
 
 .Name-logo {
@@ -73,6 +74,7 @@ body {
     font-size: 20px;
     line-height: 24px;
     border: 0;
+    cursor: pointer;
 }
 
 .info p {

@@ -9,26 +9,21 @@
     <title>Document</title>
 </head>
 <body>
-
-{{range .}}
-
-        <p>{{.Id}}</p>
-        <p>{{.User}}</p>
-        <p>{{.Question}}</p>
-        <p>{{.Answer1}}</p>
-        <p>{{.Answer2}}</p>
-        <p>{{.Answer3}}</p>
-        <p>{{.Answer4}}</p>
-
-{{end}}
-
-    <form class="NAME_LOGO" action="./next_test">
+    <form class="NAME_LOGO" action="./test" method="post">
         <div class="Name-logo">
             <img src="./static/img/Иконка _Лого_ (1).svg">
             <a href="./"><img src="./static/img/Vector (4).jpg"></a>
         </div>
         <div class="info">
             <p>Добро пожаловать!<br>Вы собираетесь начать тест</p>
+
+            {{range .}}
+
+            <input type="hidden" name="name" value="{{.User}}">
+            <input type="hidden" name="id" value="{{.Id}}">
+
+            {{end}}
+
             <ul>
                 <li>Тест содержит 60 вопросов с возможностью выбора 1 правильного ответа из 4-х.</li>
                 <li class="info-li">Время на выполнения теста не ограничено.</li>
