@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 type Quiestions struct {
@@ -21,29 +22,54 @@ type Clientusers struct {
 }
 
 type Answers struct {
-	Id          int
-	Answer1     string
-	Answer2     string
-	Answer3     string
-	Answer4     string
-	QuiestionId int
+	Id      int
+	Answer1 string
+	Answer2 string
+	Answer3 string
+	Answer4 string
+	//QuestionId int
+}
+
+type Quizes struct {
+	Id      int
+	Userid  int
+	Started time.Time
+}
+
+type Correctanswers struct {
+	//Id            int
+	//QuiestionId   int
+	//Answercorrect string
+	Correct bool
+}
+
+type Results struct {
+	Id         int
+	Questionid int
+	Answerid   int
+	Quizid     int
+	Answered   time.Time
+	Point      int
 }
 
 type ViewData struct {
-	User     string
-	Id       int
-	Question string
-	Answer1  string
-	Answer2  string
-	Answer3  string
-	Answer4  string
+	User string
+	//	Id        int
+	Question  string
+	Answer1   string
+	Answer2   string
+	Answer3   string
+	Answer4   string
+	TestStart int
+	TestId    string
 }
 
 type FormData struct {
-	Question string
-	Answer   string
-	Name     string
-	idName   string
+	Question  string
+	Answer    string
+	Name      string
+	TestStart string
+	User      string
 }
 
 // Home Обработчик главной страницы.
@@ -114,23 +140,36 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 	user := Clientusers{
 		Name: r.FormValue("name"),
 	}
-	fmt.Println(user.Name)
 
-	// Создать запись Clientusers
-	db.Create(&Clientusers{Name: user.Name})
+	if user.Name != "" {
+		fmt.Printf("\nЗапись %v\n", user.Name)
 
-	// Получить последнею запись
+		// Создать запись Clientusers
+		//db.Create(&Clientusers{Name: user.Name})
+	} else {
+		return
+	}
+
+	// Получить последнею запись Clientusers
 	db.Last(&user)
-	fmt.Printf("\nПоследнею запись Clientusers %v  %v\n", user.Name, user.Id)
+
+	//timeT := startTime()
+
+	//Создать запись Quizes
+	//db.Create(&Quizes{Userid: user.Id, Started: timeT})
+
+	var numberTest Quizes
+	// Получить последнею запись Quizes
+	db.Last(&numberTest)
 
 	data := ViewData{
-		User: user.Name,
-		Id:   user.Id,
+		User:      user.Name,
+		TestStart: numberTest.Id,
 	}
-	fmt.Println(data)
+	//fmt.Println(data)
 
 	conclusion = append(conclusion, data)
-	fmt.Println(conclusion)
+	//	fmt.Println(conclusion)
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/next_test.html")
@@ -163,51 +202,68 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Нет подключения к БД", err)
 	}
 
+	//--------------------------------------
+
+	form := FormData{
+		TestStart: r.FormValue("id"),
+		Question:  r.FormValue("question"),
+		Answer:    r.FormValue("answer"),
+	}
+
+	//-----------------------------------------------------
+
 	// Извлечение всех объектов
-	var all []Quiestions
-	db.Find(&all)
+	var allq []Quiestions
+	db.Find(&allq)
+
+	var resR []Results
+	// Извлечение объектов, где поле quizid равно TestStart
+	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
 	// Рандомно выбираем первичный ключ
-	strId := randomId(all)
+	strId := randomId(allq, resR)
+	fmt.Printf("Рандомно выбираем первичный ключ %v\n", strId)
+
+	//-------------------------------------------------------
 
 	// Извлечение объекта с помощью первичного ключа
 	var question Quiestions
 	db.First(&question, strId)
-	fmt.Println(question)
 
-	// Извлечение объекта с помощью первичного ключа
+	// Извлечение объектов, где поле quiestionid равно первичному ключу
 	var answer Answers
 	db.Where("quiestionid = ?", strId).First(&answer)
 
-	fmt.Println(answer.Answer1, answer.Answer2, answer.Answer3, answer.Answer4)
+	// Извлечение объектов, где поле answercorrect равно form.Answer
+	var correct Correctanswers
+	db.Where("answercorrect = ?", form.Answer).Find(&correct)
+	fmt.Printf("Верный ответ %v\n", correct.Correct)
 
-	fmt.Println("/-------------------------------------------- Прилет")
+	// Извлечение объектов, где поле id равно form.TestStart
+	var quizes Quizes
+	db.Where("id = ?", form.TestStart).Find(&quizes)
 
-	user := Clientusers{
-		Name: r.FormValue("name"),
+	var result Results
+	// Правильный ответ
+	if correct.Correct == true {
+		result.Point = 1
 	}
-	fmt.Println(user.Name)
 
-	form := FormData{
-		idName:   r.FormValue("name"),
-		Question: r.FormValue("question"),
-		Answer:   r.FormValue("answer"),
-	}
-	fmt.Println(form.Name)
-	fmt.Println(form.idName)
-	fmt.Println(form.Answer)
+	//timeT := startTime()
+
+	//Создать запись Results
+	//db.Create(&Results{Questionid: question.Id, Answerid: answer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
 
 	fmt.Println("/---------------------------------------------")
 
 	data := ViewData{
-		User:     form.idName,
+		TestId:   form.TestStart,
 		Question: question.Question,
 		Answer1:  answer.Answer1,
 		Answer2:  answer.Answer2,
 		Answer3:  answer.Answer3,
 		Answer4:  answer.Answer4,
 	}
-	fmt.Println(data)
 
 	var conclusion []ViewData
 
@@ -220,7 +276,6 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
-
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
@@ -231,14 +286,72 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func randomId(all []Quiestions) int {
-	sl := make([]int, 0, 60)
-	rand.Shuffle(len(all), func(i, j int) { all[i], all[j] = all[j], all[i] }) // Рандом Id
+// Создает рандомно число
+func randomId(allq []Quiestions, resR []Results) int {
 
-	for _, s := range all {
-		sl = append(sl, s.Id)
+	slQ := make([]int, 0, 100)
+	// Присвоение значений срезу
+	for _, v := range allq {
+		slQ = append(slQ, v.Id)
 	}
-	fmt.Print("\n", sl)
+
+	slR := make([]int, 0, 60)
+	// Присвоение значений срезу
+	for _, v := range resR {
+		slR = append(slR, v.Questionid)
+	}
+	fmt.Println(slQ)
+	fmt.Println(slR)
+
+	var shortest, longest *[]int
+	if len(slQ) < len(slR) {
+		shortest = &slQ
+		longest = &slR
+	} else {
+		shortest = &slR
+		longest = &slQ
+	}
+	// Самый короткий фрагмент в карту
+	var m map[int]bool
+	m = make(map[int]bool, len(*shortest))
+	for _, s := range *shortest {
+		m[s] = false
+	}
+	// Значения из самого длинного фрагмента, которые не существуют на карте
+	var diff []int
+	for _, s := range *longest {
+		if _, ok := m[s]; !ok {
+			diff = append(diff, s)
+			continue
+		}
+		m[s] = true
+	}
+	// Значения с карты, которые не были в самом длинном фрагменте
+	for s, ok := range m {
+		if ok {
+			continue
+		}
+		diff = append(diff, s)
+	}
+	fmt.Println(diff)
+
+	sl := make([]int, 0, 100)
+	rand.Shuffle(len(diff), func(i, j int) { diff[i], diff[j] = diff[j], diff[i] }) // Рандом Id
+
+	for _, v := range diff {
+		sl = append(sl, v)
+	}
 
 	return sl[0]
+}
+
+func startTime() time.Time {
+
+	tNow := time.Now()
+	//Время для Unix Timestamp
+	tUnix := tNow.Unix()
+	//Временная метка Unix для time.Time
+	time.Unix(tUnix, 0)
+
+	return time.Now()
 }
