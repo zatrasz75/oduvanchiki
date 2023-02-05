@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -62,6 +63,9 @@ type ViewData struct {
 	Answer4   string
 	TestStart int
 	TestId    string
+	Available bool
+	Point     int
+	Level     string
 }
 
 type FormData struct {
@@ -71,6 +75,9 @@ type FormData struct {
 	TestStart string
 	User      string
 }
+
+var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
 // Home Обработчик главной страницы.
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +89,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
-		log.Println(err.Error())
+		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
@@ -91,8 +98,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	// возможность отправки динамических данных в шаблон.
 	err = ts.Execute(w, nil)
 	if err != nil {
-		log.Println(err.Error())
-		//http.Error(w, "Внутренняя ошибка сервера", 500)
+		errlog.Printf("Внутренняя ошибка сервера. %s", err)
+		http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
 }
 
@@ -106,7 +113,7 @@ func NamePage(w http.ResponseWriter, r *http.Request) {
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/name.html")
 	if err != nil {
-		log.Println(err.Error())
+		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
@@ -116,8 +123,8 @@ func NamePage(w http.ResponseWriter, r *http.Request) {
 	// возможность отправки динамических данных в шаблон.
 	err = ts.Execute(w, nil)
 	if err != nil {
-		log.Println(err.Error())
-		//http.Error(w, "внутренняя ошибка сервера", 500)
+		errlog.Printf("Внутренняя ошибка сервера. %s", err)
+		http.Error(w, "внутренняя ошибка сервера", 500)
 	}
 }
 
@@ -132,58 +139,58 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Нет подключения к БД", err)
+		log.Fatal("Нет подключения к БД \n", err)
 	}
-
-	var conclusion []ViewData
 
 	user := Clientusers{
 		Name: r.FormValue("name"),
 	}
 
+	var numberTest Quizes
+
 	if user.Name != "" {
-		fmt.Printf("\nЗапись %v\n", user.Name)
+		inflog.Printf("\nСоздаём запись Clientusers %v\n", user.Name)
 
 		// Создать запись Clientusers
-		//db.Create(&Clientusers{Name: user.Name})
+		db.Create(&Clientusers{Name: user.Name})
+
+		// Получить последнею запись Clientusers
+		db.Last(&user)
+
+		timeT := startTime()
+
+		inflog.Printf("Создаём запись в Quizes с временем %v", timeT)
+
+		//Создать запись Quizes
+		db.Create(&Quizes{Userid: user.Id, Started: timeT})
+
+		// Получить последнею запись Quizes
+		db.Last(&numberTest)
 	} else {
+
+		errlog.Print("Ошибка ввода имени")
+		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
-
-	// Получить последнею запись Clientusers
-	db.Last(&user)
-
-	//timeT := startTime()
-
-	//Создать запись Quizes
-	//db.Create(&Quizes{Userid: user.Id, Started: timeT})
-
-	var numberTest Quizes
-	// Получить последнею запись Quizes
-	db.Last(&numberTest)
 
 	data := ViewData{
 		User:      user.Name,
 		TestStart: numberTest.Id,
 	}
-	//fmt.Println(data)
-
-	conclusion = append(conclusion, data)
-	//	fmt.Println(conclusion)
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/next_test.html")
 	if err != nil {
-		log.Println(err.Error())
+		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %v\n", err)
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, conclusion)
+	err = ts.Execute(w, data)
 	if err != nil {
-		log.Println(err.Error())
+		errlog.Printf("Внутренняя ошибка сервера. %s", err)
 		http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
 }
@@ -202,42 +209,37 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Нет подключения к БД", err)
 	}
 
-	//--------------------------------------
-
 	form := FormData{
 		TestStart: r.FormValue("id"),
 		Question:  r.FormValue("question"),
 		Answer:    r.FormValue("answer"),
 	}
 
-	//-----------------------------------------------------
-
 	// Извлечение всех объектов
 	var allq []Quiestions
 	db.Find(&allq)
 
 	var resR []Results
-	// Извлечение объектов, где поле quizid равно TestStart
+	// Извлечение объектов, где поле quizid равно form.TestStart
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
+
+	var question Quiestions
+	var answer Answers
 
 	// Рандомно выбираем первичный ключ
 	strId := randomId(allq, resR)
-	fmt.Printf("Рандомно выбираем первичный ключ %v\n", strId)
-
-	//-------------------------------------------------------
+	inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
 
 	// Извлечение объекта с помощью первичного ключа
-	var question Quiestions
 	db.First(&question, strId)
 
-	// Извлечение объектов, где поле quiestionid равно первичному ключу
-	var answer Answers
-	db.Where("quiestionid = ?", strId).First(&answer)
+	// Извлечение объектов, где поле quiestionid равно первичному ключу strId
+	db.Where("quiestionid = ?", strId).Find(&answer)
 
 	// Извлечение объектов, где поле answercorrect равно form.Answer
 	var correct Correctanswers
 	db.Where("answercorrect = ?", form.Answer).Find(&correct)
-	fmt.Printf("Верный ответ %v\n", correct.Correct)
+	inflog.Printf("Верный ответ %v\n", correct.Correct)
 
 	// Извлечение объектов, где поле id равно form.TestStart
 	var quizes Quizes
@@ -249,47 +251,102 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		result.Point = 1
 	}
 
-	//timeT := startTime()
+	timeT := startTime()
 
 	//Создать запись Results
-	//db.Create(&Results{Questionid: question.Id, Answerid: answer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
+	db.Create(&Results{Questionid: question.Id, Answerid: answer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
+	inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", question.Id, answer.Id, quizes.Id, timeT, result.Point)
 
 	fmt.Println("/---------------------------------------------")
 
-	data := ViewData{
-		TestId:   form.TestStart,
-		Question: question.Question,
-		Answer1:  answer.Answer1,
-		Answer2:  answer.Answer2,
-		Answer3:  answer.Answer3,
-		Answer4:  answer.Answer4,
+	var user Clientusers
+	var display ViewData
+
+	var point []Results
+	db.Where("quizid = ?", form.TestStart).Find(&point)
+
+	if len(point) > 7 {
+		display.Available = true
+
+		point := testresult(point)
+		result.Point = point
+		inflog.Printf("Правильных ответов %v\n", result.Point)
+
+		// Извлечение объектов, где поле id равно quizes.Userid
+		db.Where("id = ?", quizes.Userid).Find(&user)
+		inflog.Printf("Имя : %v\n", user.Name)
+
+		level := levelTest(result.Point)
+		display.Level = level
+		inflog.Printf("Знания равны : %v уровень\n", display.Level)
+
 	}
+	fmt.Printf("Available %v\n", display.Available)
 
-	var conclusion []ViewData
-
-	conclusion = append(conclusion, data)
+	data := ViewData{
+		Available: display.Available,
+		User:      user.Name,
+		Point:     result.Point,
+		Level:     display.Level,
+		TestId:    form.TestStart,
+		Question:  question.Question,
+		Answer1:   answer.Answer1,
+		Answer2:   answer.Answer2,
+		Answer3:   answer.Answer3,
+		Answer4:   answer.Answer4,
+	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/test.html")
 	if err != nil {
-		log.Println(err.Error())
+		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %v", err)
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, conclusion)
+	err = ts.Execute(w, data)
 	if err != nil {
-		log.Println(err.Error())
+		errlog.Printf("Внутренняя ошибка сервера. %v", err)
 		http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
+}
+
+// Подсчитывает уровень знаний по количеству ответов
+func levelTest(point int) string {
+	var ups string
+	switch {
+	case point <= 2:
+		ups = "1 уровень"
+	case point <= 4:
+		ups = "2 уровень"
+	case point <= 6:
+		ups = "3 уровень"
+	case point <= 8:
+		ups = "4 уровень"
+	case point <= 10:
+		ups = "5 уровень"
+	case point <= 12:
+		ups = "6 уровень"
+	}
+	return ups
+}
+
+// Считает количество правильных ответов
+func testresult(point []Results) int {
+	var p int
+	for _, v := range point {
+		p += v.Point
+	}
+
+	return p
 }
 
 // Создает рандомно число
 func randomId(allq []Quiestions, resR []Results) int {
 
-	slQ := make([]int, 0, 100)
+	slQ := make([]int, 0, 200)
 	// Присвоение значений срезу
 	for _, v := range allq {
 		slQ = append(slQ, v.Id)
@@ -335,16 +392,12 @@ func randomId(allq []Quiestions, resR []Results) int {
 	}
 	fmt.Println(diff)
 
-	sl := make([]int, 0, 100)
 	rand.Shuffle(len(diff), func(i, j int) { diff[i], diff[j] = diff[j], diff[i] }) // Рандом Id
 
-	for _, v := range diff {
-		sl = append(sl, v)
-	}
-
-	return sl[0]
+	return diff[0]
 }
 
+// Выводит время +Unix
 func startTime() time.Time {
 
 	tNow := time.Now()

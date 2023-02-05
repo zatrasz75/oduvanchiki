@@ -17,12 +17,8 @@
         <div class="info">
             <p>Добро пожаловать!<br>Вы собираетесь начать тест</p>
 
-            {{range .}}
-
             <input type="hidden" name="name" value="{{.User}}">
             <input type="hidden" name="id" value="{{.TestStart}}">
-
-            {{end}}
 
             <ul>
                 <li>Тест содержит 60 вопросов с возможностью выбора 1 правильного ответа из 4-х.</li>

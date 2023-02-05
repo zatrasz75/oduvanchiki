@@ -26,8 +26,18 @@
             </nav>
         </div>
     </div>
+
+    <div>
+
+    {{if .Available}}
+       <p>Имя : {{.User}}</p>
+       <p>Правильных ответов : {{.Point}}</p>
+       <p>Знания равны : {{.Level}}</p>
+    {{else}}
+
+    </div>
+
     <form class="quiz-box" id="quiz" action="./test" method="post">
-        {{range .}}
     <div class="quiz-box" id="quiz">
         <div class="quiz-header">
             <h2 id="question">{{.Question}}</h2>
@@ -61,8 +71,8 @@
             <button class="button test_button" id="submit" disabled>Проверить ответ</button>
         </div>
     </div>
-        {{end}}
     </form>
+    {{end}}
 </header>
 <footer class="FOOTER">
     <div class="section">

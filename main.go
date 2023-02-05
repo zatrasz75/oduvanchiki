@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
 func main() {
 
 	PORT := ":4000"
@@ -36,12 +39,12 @@ func main() {
 	router.HandleFunc("/next_test", ip.NextTest).Methods("POST")
 	router.HandleFunc("/test", ip.FormTest).Methods("POST")
 
-	log.Print("Запуск сервера на http://127.0.0.1", PORT)
+	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
 
 	// Запуск сервера в горутине
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			log.Fatal(err)
+			inflog.Println(err)
 		}
 	}()
 	graceShutdown(srv)
@@ -58,8 +61,9 @@ func graceShutdown(srv *http.Server) {
 	defer cancel()
 	err := srv.Shutdown(ctx)
 	if err != nil {
+		inflog.Printf("Ошибка при закрытии прослушивателей или тайм-аут контекста %v", err)
 		return
 	}
-	log.Printf("Выключение сервера")
+	inflog.Printf("Выключение сервера")
 	os.Exit(0)
 }
