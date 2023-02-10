@@ -45,3 +45,11 @@ body {
     color:#FFFFFF;
     cursor: pointer;
 }
+
+#submit:hover {
+    background-color: #1A307A;
+}
+
+#submit:active {
+    background-color: #97A7DD;
+}

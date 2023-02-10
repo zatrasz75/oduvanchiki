@@ -27,15 +27,23 @@
         </div>
     </div>
 
-    <div>
-
     {{if .Available}}
-       <p>Имя : {{.User}}</p>
-       <p>Правильных ответов : {{.Point}}</p>
-       <p>Знания равны : {{.Level}}</p>
-    {{else}}
+    <form>
 
-    </div>
+        <div>
+            <p>Результат теста</p>
+        </div>
+        <div>
+            <img src="./static/img/Ellipse 15.svg" alt="Result">
+
+            <p>Имя : {{.User}}</p>
+            <p>Правильных ответов : {{.Point}}</p>
+            <p>Знания Уровень: {{.Level}}</p>
+
+        </div>
+
+    </form>
+    {{else}}
 
     <form class="quiz-box" id="quiz" action="./test" method="post">
     <div class="quiz-box" id="quiz">

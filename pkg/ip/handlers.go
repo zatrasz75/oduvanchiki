@@ -278,7 +278,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) > 60 {
+	if len(point) > 6 {
 		display.Available = true
 
 		point := testresult(point)
@@ -350,15 +350,15 @@ func levelTest(point int) string {
 	var ups string
 	switch {
 	case point <= 15:
-		ups = "A1 уровень"
+		ups = "A1"
 	case point <= 25:
-		ups = "A2 уровень"
+		ups = "A2"
 	case point <= 40:
-		ups = "B1 уровень"
+		ups = "B1"
 	case point <= 55:
-		ups = "B2 уровень"
+		ups = "B2"
 	case point > 55:
-		ups = "C1 уровень"
+		ups = "C1"
 		//case point <= 12:
 		//	ups = "6 уровень"
 	}

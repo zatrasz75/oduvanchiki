@@ -117,6 +117,14 @@ body {
     cursor: pointer;
 }
 
+.button_home:hover {
+    background-color: #BC9F3B;
+}
+
+.button_home:active {
+    background-color: #FDE07D;
+}
+
 .image-home {
     max-width: 747px;
     max-height: 496px;
@@ -137,7 +145,7 @@ body {
 }
 
 .WHY-TEST {
-    background-color: #FDF4D3;
+    background-color: #FDE4D3;
     Height: 616px;
 }
 
@@ -382,6 +390,14 @@ img.rot1 {
     line-height: 24px;
 }
 
+.test_button:hover {
+    background-color: #B45060;
+}
+
+.test_button:active {
+    background-color: #F893A3;
+}
+
 .test-now {
     display: flex;
     justify-content: space-between;
@@ -390,7 +406,7 @@ img.rot1 {
 
 .test-now-text {
     text-align: center;
-    margin-top: 82px;
+    margin-top: 15px;
 }
 
 .test-now-img {
@@ -420,6 +436,19 @@ img.rot1 {
     align-items: center;
     max-width: 1200px;
 }
+
+.footer-logo {
+    margin-top: -37px;
+}
+
+.footer-logo img {
+    margin-top: -20px;
+}
+
+.footer-navi {
+    margin-top: 34px;
+}
+
 .footer-nav {
     display: grid;
     list-style-type: none;
