@@ -38,10 +38,10 @@ type Quizes struct {
 }
 
 type Correctanswers struct {
-	//Id            int
-	//QuiestionId   int
-	//Answercorrect string
-	Correct bool
+	Id            int
+	Questionid    int
+	Answercorrect string
+	Correct       bool
 }
 
 type Results struct {
@@ -54,8 +54,8 @@ type Results struct {
 }
 
 type ViewData struct {
-	User string
-	//	Id        int
+	User      string
+	Id        int
 	Question  string
 	Answer1   string
 	Answer2   string
@@ -69,11 +69,12 @@ type ViewData struct {
 }
 
 type FormData struct {
-	Question  string
-	Answer    string
-	Name      string
-	TestStart string
-	User      string
+	Question   string
+	Questionid string
+	Answer     string
+	Name       string
+	TestStart  string
+	User       string
 }
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -149,7 +150,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 	var numberTest Quizes
 
 	if user.Name != "" {
-		inflog.Printf("\nСоздаём запись Clientusers %v\n", user.Name)
+		inflog.Printf("Создаём запись Clientusers %v\n", user.Name)
 
 		// Создать запись Clientusers
 		db.Create(&Clientusers{Name: user.Name})
@@ -210,9 +211,10 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := FormData{
-		TestStart: r.FormValue("id"),
-		Question:  r.FormValue("question"),
-		Answer:    r.FormValue("answer"),
+		TestStart:  r.FormValue("id"),
+		Question:   r.FormValue("question"),
+		Answer:     r.FormValue("answer"),
+		Questionid: r.FormValue("questionid"),
 	}
 
 	// Извлечение всех объектов
@@ -223,6 +225,8 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
+	// Сначала вывод дата==================================
+
 	var question Quiestions
 	var answer Answers
 
@@ -230,20 +234,27 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	strId := randomId(allq, resR)
 	inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
 
-	// Извлечение объекта с помощью первичного ключа
-	db.First(&question, strId)
-
-	// Извлечение объектов, где поле quiestionid равно первичному ключу strId
-	db.Where("quiestionid = ?", strId).Find(&answer)
-
 	// Извлечение объектов, где поле answercorrect равно form.Answer
-	var correct Correctanswers
+	var correct Correctanswers //==========================================================================
 	db.Where("answercorrect = ?", form.Answer).Find(&correct)
-	inflog.Printf("Верный ответ %v\n", correct.Correct)
+	inflog.Printf("Верный ответ %v %v\n", correct.Correct, correct.Questionid)
+
+	var resA Results
+	if form.Questionid != "" {
+		// Извлечение объектов, где поле questionid равно form.Questionid
+		db.Where("questionid = ?", form.Questionid).Find(&resA)
+	}
+	cheater := bagUpdateFix(resR, resA.Questionid)
+	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
 
 	// Извлечение объектов, где поле id равно form.TestStart
 	var quizes Quizes
 	db.Where("id = ?", form.TestStart).Find(&quizes)
+
+	// Извлечение объекта с помощью первичного ключа
+	db.First(&question, strId)
+	// Извлечение объектов, где поле quiestionid равно первичному ключу strId
+	db.Where("quiestionid = ?", strId).Find(&answer)
 
 	var result Results
 	// Правильный ответ
@@ -251,11 +262,13 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		result.Point = 1
 	}
 
-	timeT := startTime()
+	if cheater != true {
+		timeT := startTime()
 
-	//Создать запись Results
-	db.Create(&Results{Questionid: question.Id, Answerid: answer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
-	inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", question.Id, answer.Id, quizes.Id, timeT, result.Point)
+		//Создать запись Results
+		db.Create(&Results{Questionid: question.Id, Answerid: answer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
+		inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", question.Id, answer.Id, quizes.Id, timeT, result.Point)
+	}
 
 	fmt.Println("/---------------------------------------------")
 
@@ -265,7 +278,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) > 7 {
+	if len(point) > 60 {
 		display.Available = true
 
 		point := testresult(point)
@@ -278,10 +291,10 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 		level := levelTest(result.Point)
 		display.Level = level
-		inflog.Printf("Знания равны : %v уровень\n", display.Level)
+		inflog.Printf("Знания равны : %v \n", display.Level)
 
 	}
-	fmt.Printf("Available %v\n", display.Available)
+	inflog.Printf("Available %v\n", display.Available)
 
 	data := ViewData{
 		Available: display.Available,
@@ -290,6 +303,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		Level:     display.Level,
 		TestId:    form.TestStart,
 		Question:  question.Question,
+		Id:        question.Id,
 		Answer1:   answer.Answer1,
 		Answer2:   answer.Answer2,
 		Answer3:   answer.Answer3,
@@ -313,22 +327,40 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Определяет есть такая запись или обновлена страница
+func bagUpdateFix(resR []Results, resA int) bool {
+	var fix bool
+
+	sl := make([]int, 0, 60)
+	for _, v := range resR {
+		sl = append(sl, v.Questionid)
+	}
+
+	for i := 0; i < len(sl)-1; i++ {
+		if sl[i] == resA {
+			fix = true
+		}
+	}
+
+	return fix
+}
+
 // Подсчитывает уровень знаний по количеству ответов
 func levelTest(point int) string {
 	var ups string
 	switch {
-	case point <= 2:
-		ups = "1 уровень"
-	case point <= 4:
-		ups = "2 уровень"
-	case point <= 6:
-		ups = "3 уровень"
-	case point <= 8:
-		ups = "4 уровень"
-	case point <= 10:
-		ups = "5 уровень"
-	case point <= 12:
-		ups = "6 уровень"
+	case point <= 15:
+		ups = "A1 уровень"
+	case point <= 25:
+		ups = "A2 уровень"
+	case point <= 40:
+		ups = "B1 уровень"
+	case point <= 55:
+		ups = "B2 уровень"
+	case point > 55:
+		ups = "C1 уровень"
+		//case point <= 12:
+		//	ups = "6 уровень"
 	}
 	return ups
 }
@@ -357,8 +389,6 @@ func randomId(allq []Quiestions, resR []Results) int {
 	for _, v := range resR {
 		slR = append(slR, v.Questionid)
 	}
-	fmt.Println(slQ)
-	fmt.Println(slR)
 
 	var shortest, longest *[]int
 	if len(slQ) < len(slR) {
@@ -368,12 +398,14 @@ func randomId(allq []Quiestions, resR []Results) int {
 		shortest = &slR
 		longest = &slQ
 	}
+
 	// Самый короткий фрагмент в карту
 	var m map[int]bool
 	m = make(map[int]bool, len(*shortest))
 	for _, s := range *shortest {
 		m[s] = false
 	}
+
 	// Значения из самого длинного фрагмента, которые не существуют на карте
 	var diff []int
 	for _, s := range *longest {
@@ -383,6 +415,7 @@ func randomId(allq []Quiestions, resR []Results) int {
 		}
 		m[s] = true
 	}
+
 	// Значения с карты, которые не были в самом длинном фрагменте
 	for s, ok := range m {
 		if ok {
@@ -390,7 +423,6 @@ func randomId(allq []Quiestions, resR []Results) int {
 		}
 		diff = append(diff, s)
 	}
-	fmt.Println(diff)
 
 	rand.Shuffle(len(diff), func(i, j int) { diff[i], diff[j] = diff[j], diff[i] }) // Рандом Id
 
