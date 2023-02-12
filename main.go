@@ -12,7 +12,6 @@ import (
 	"time"
 )
 
-var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
 func main() {

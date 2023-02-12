@@ -28,7 +28,6 @@ type Answers struct {
 	Answer2 string
 	Answer3 string
 	Answer4 string
-	//QuestionId int
 }
 
 type Quizes struct {
@@ -76,6 +75,19 @@ type FormData struct {
 	TestStart  string
 	User       string
 }
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "rootroot"
+	dbname   = "Dandelions" // Dandelions postgres
+)
+
+var (
+	// Подключение к БД
+	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, port, user, password, dbname)
+)
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -136,9 +148,9 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var dsn = "host=localhost user=postgres password=rootroot dbname=Dandelions port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	//var dsn = "host=localhost user=postgres password=rootroot dbname=Dandelions port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Нет подключения к БД \n", err)
 	}
@@ -203,9 +215,9 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var dsn = "host=localhost user=postgres password=rootroot dbname=Dandelions port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	//var dsn = "host=localhost user=postgres password=rootroot dbname=Dandelions port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Нет подключения к БД", err)
 	}
@@ -306,15 +318,16 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
 	// Рандомно выбираем первичный ключ
-	strId := randomId(allq, resR)
+	strId, err := randomId(allq, resR)
+	if err != nil {
+		panic(err)
+	}
 	inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
 
 	// Извлечение объекта с помощью первичного ключа
 	db.First(&question, strId)
 	// Извлечение объектов, где поле quiestionid равно первичному ключу strId
 	db.Where("quiestionid = ?", strId).Find(&answer)
-
-	//===============================================================
 
 	data := ViewData{
 		Available: display.Available,
@@ -396,7 +409,7 @@ func testresult(point []Results) int {
 }
 
 // Создает рандомно число
-func randomId(allq []Quiestions, resR []Results) int {
+func randomId(allq []Quiestions, resR []Results) (int, error) {
 
 	slQ := make([]int, 0, 100)
 	// Присвоение значений срезу
@@ -438,7 +451,7 @@ func randomId(allq []Quiestions, resR []Results) int {
 	// Рандом Id
 	rand.Shuffle(len(diff), func(i, j int) { diff[i], diff[j] = diff[j], diff[i] })
 
-	return diff[0]
+	return diff[0], nil
 }
 
 // Выводит время +Unix
