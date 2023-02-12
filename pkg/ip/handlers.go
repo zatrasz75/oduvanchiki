@@ -270,7 +270,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 13 {
+	if len(point) == 59 {
 		display.Available = true
 
 		point := testresult(point)
