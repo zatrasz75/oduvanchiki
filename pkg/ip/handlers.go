@@ -81,7 +81,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "rootroot"
-	dbname   = "Dandelions" // Dandelions postgres
+	dbname   = "postgres" // Dandelions postgres
 )
 
 var (
@@ -270,7 +270,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 13 {
+	if len(point) == 59 {
 		display.Available = true
 
 		point := testresult(point)
