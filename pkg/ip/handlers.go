@@ -81,7 +81,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "rootroot"
-	dbname   = "Dandelions" // Dandelions postgres
+	dbname   = "Dandelions" // Dandelions postgres testdb
 )
 
 var (
@@ -249,17 +249,17 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	if form.Questionid != "" {
 		timeT := startTime()
 
-		var inputQuestion Results
+		var inputQuestion Quiestions
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
-		db.Where("questionid = ?", form.Questionid).Find(&inputQuestion)
+		db.Where("id = ?", form.Questionid).Find(&inputQuestion)
 
 		var inputAnswer Answers
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
 		db.Where("quiestionid = ?", form.Questionid).Find(&inputAnswer)
 
 		//Создать запись Results
-		db.Create(&Results{Questionid: inputQuestion.Questionid, Answerid: inputAnswer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
-		inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", inputQuestion.Questionid, inputAnswer.Id, quizes.Id, timeT, result.Point)
+		db.Create(&Results{Questionid: inputQuestion.Id, Answerid: inputAnswer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
+		inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", inputQuestion.Id, inputAnswer.Id, quizes.Id, timeT, result.Point)
 	}
 
 	fmt.Println("/---------------------------------------------")
