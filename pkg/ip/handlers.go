@@ -270,7 +270,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 59 {
+	if len(point) == 60 {
 		display.Available = true
 
 		point := testresult(point)
@@ -317,17 +317,21 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
-	// Рандомно выбираем первичный ключ
-	strId, err := randomId(allq, resR)
-	if err != nil {
-		panic(err)
-	}
-	inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
+	var strId int
+	if len(point) <= 59 {
+		// Рандомно выбираем первичный ключ
+		strId, err = randomId(allq, resR)
+		if err != nil {
+			panic(err)
+		}
+		inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
 
-	// Извлечение объекта с помощью первичного ключа
-	db.First(&question, strId)
-	// Извлечение объектов, где поле quiestionid равно первичному ключу strId
-	db.Where("quiestionid = ?", strId).Find(&answer)
+		// Извлечение объекта с помощью первичного ключа
+		db.First(&question, strId)
+
+		// Извлечение объектов, где поле quiestionid равно первичному ключу strId
+		db.Where("quiestionid = ?", strId).Find(&answer)
+	}
 
 	data := ViewData{
 		Available: display.Available,
