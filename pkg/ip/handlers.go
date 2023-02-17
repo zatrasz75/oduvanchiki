@@ -23,11 +23,12 @@ type Clientusers struct {
 }
 
 type Answers struct {
-	Id      int
-	Answer1 string
-	Answer2 string
-	Answer3 string
-	Answer4 string
+	Id          int
+	Answer1     string
+	Answer2     string
+	Answer3     string
+	Answer4     string
+	Quiestionid string
 }
 
 type Quizes struct {
@@ -37,6 +38,7 @@ type Quizes struct {
 }
 
 type Correctanswers struct {
+	Id            int
 	Questionid    int
 	Answercorrect string
 	Correct       bool
@@ -152,26 +154,36 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		Name: r.FormValue("name"),
 	}
 
-	var numberTest Quizes
+	// Номер теста
+	var numTest int
 
 	if user.Name != "" {
-		inflog.Printf("Создаём запись Clientusers %v\n", user.Name)
-
 		// Создать запись Clientusers
-		db.Create(&Clientusers{Name: user.Name})
+		recordName := &Clientusers{Name: user.Name}
+		resultClient := db.Create(&recordName)
 
-		// Получить последнею запись Clientusers
-		db.Last(&user)
+		if resultClient.Error == nil {
+			inflog.Printf("В Clientusers создано количество записей %v\n", resultClient.RowsAffected)
+			inflog.Printf("Создана запись в Clientusers %v и получен id записи %v\n", recordName.Name, recordName.Id)
+
+		} else {
+			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
+		}
 
 		timeT := startTime()
 
-		inflog.Printf("Создаём запись в Quizes с временем %v", timeT)
-
 		//Создать запись Quizes
-		db.Create(&Quizes{Userid: user.Id, Started: timeT})
+		recordTest := Quizes{Userid: recordName.Id, Started: timeT}
+		resultQuiz := db.Create(&recordTest)
 
-		// Получить последнею запись Quizes
-		db.Last(&numberTest)
+		if resultQuiz.Error == nil {
+			inflog.Printf("В Quizes создано количество записей %v\n", resultQuiz.RowsAffected)
+			inflog.Printf("Создана запись в Quizes с временем %v и получен id %v\n", timeT, recordTest.Id)
+			numTest = recordTest.Id
+		} else {
+			errlog.Printf("Не удалось создать запись теста %v\n", recordTest.Id)
+		}
+
 	} else {
 
 		errlog.Print("Ошибка ввода имени")
@@ -181,7 +193,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 
 	data := ViewData{
 		User:      user.Name,
-		TestStart: numberTest.Id,
+		TestStart: numTest,
 	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
