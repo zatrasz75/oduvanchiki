@@ -23,11 +23,12 @@ type Clientusers struct {
 }
 
 type Answers struct {
-	Id      int
-	Answer1 string
-	Answer2 string
-	Answer3 string
-	Answer4 string
+	Id          int
+	Answer1     string
+	Answer2     string
+	Answer3     string
+	Answer4     string
+	Quiestionid string
 }
 
 type Quizes struct {
@@ -44,7 +45,6 @@ type Correctanswers struct {
 }
 
 type Results struct {
-	Id         int
 	Questionid int
 	Answerid   int
 	Quizid     int
@@ -68,25 +68,22 @@ type ViewData struct {
 }
 
 type FormData struct {
-	Question   string
 	Questionid string
 	Answer     string
-	Name       string
 	TestStart  string
-	User       string
 }
 
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "postgres"
+	users    = "postgres"
 	password = "rootroot"
 	dbname   = "Dandelions" // Dandelions postgres testdb
 )
 
 var (
 	// Подключение к БД
-	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, port, user, password, dbname)
+	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, port, users, password, dbname)
 )
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -148,8 +145,6 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//var dsn = "host=localhost user=postgres password=rootroot dbname=Dandelions port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Нет подключения к БД \n", err)
@@ -159,26 +154,36 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		Name: r.FormValue("name"),
 	}
 
-	var numberTest Quizes
+	// Номер теста
+	var numTest int
 
 	if user.Name != "" {
-		inflog.Printf("Создаём запись Clientusers %v\n", user.Name)
-
 		// Создать запись Clientusers
-		db.Create(&Clientusers{Name: user.Name})
+		recordName := &Clientusers{Name: user.Name}
+		resultClient := db.Create(&recordName)
 
-		// Получить последнею запись Clientusers
-		db.Last(&user)
+		if resultClient.Error == nil {
+			inflog.Printf("В Clientusers создано количество записей %v\n", resultClient.RowsAffected)
+			inflog.Printf("Создана запись в Clientusers %v и получен id записи %v\n", recordName.Name, recordName.Id)
+
+		} else {
+			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
+		}
 
 		timeT := startTime()
 
-		inflog.Printf("Создаём запись в Quizes с временем %v", timeT)
-
 		//Создать запись Quizes
-		db.Create(&Quizes{Userid: user.Id, Started: timeT})
+		recordTest := Quizes{Userid: recordName.Id, Started: timeT}
+		resultQuiz := db.Create(&recordTest)
 
-		// Получить последнею запись Quizes
-		db.Last(&numberTest)
+		if resultQuiz.Error == nil {
+			inflog.Printf("В Quizes создано количество записей %v\n", resultQuiz.RowsAffected)
+			inflog.Printf("Создана запись в Quizes с временем %v и получен id %v\n", timeT, recordTest.Id)
+			numTest = recordTest.Id
+		} else {
+			errlog.Printf("Не удалось создать запись теста %v\n", recordTest.Id)
+		}
+
 	} else {
 
 		errlog.Print("Ошибка ввода имени")
@@ -188,7 +193,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 
 	data := ViewData{
 		User:      user.Name,
-		TestStart: numberTest.Id,
+		TestStart: numTest,
 	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
@@ -215,8 +220,6 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//var dsn = "host=localhost user=postgres password=rootroot dbname=Dandelions port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Нет подключения к БД", err)
@@ -224,7 +227,6 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 	form := FormData{
 		TestStart:  r.FormValue("id"),
-		Question:   r.FormValue("question"),
 		Answer:     r.FormValue("answer"),
 		Questionid: r.FormValue("questionid"),
 	}
@@ -270,7 +272,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 60 {
+	if len(point) == 14 {
 		display.Available = true
 
 		point := testresult(point)
@@ -318,7 +320,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
 	var strId int
-	if len(point) <= 59 {
+	if len(point) <= 13 {
 		// Рандомно выбираем первичный ключ
 		strId, err = randomId(allq, resR)
 		if err != nil {
@@ -396,8 +398,6 @@ func levelTest(point int) string {
 		ups = "B2"
 	case point > 55:
 		ups = "C1"
-		//case point <= 12:
-		//	ups = "6 уровень"
 	}
 	return ups
 }
