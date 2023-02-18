@@ -28,7 +28,7 @@ type Answers struct {
 	Answer2     string
 	Answer3     string
 	Answer4     string
-	Quiestionid string
+	Quiestionid int
 }
 
 type Quizes struct {
@@ -272,7 +272,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 14 {
+	if len(point) == 60 {
 		display.Available = true
 
 		point := testresult(point)
@@ -320,7 +320,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
 	var strId int
-	if len(point) <= 13 {
+	if len(point) <= 59 {
 		// Рандомно выбираем первичный ключ
 		strId, err = randomId(allq, resR)
 		if err != nil {
