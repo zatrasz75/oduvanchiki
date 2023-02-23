@@ -6,102 +6,97 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS public.answers
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    id bigint NOT NULL DEFAULT nextval('answers_id_seq'::regclass),
     answer1 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     answer2 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     answer3 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     answer4 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     quiestionid bigint NOT NULL,
-    CONSTRAINT answer_pkey PRIMARY KEY (id)
+    CONSTRAINT answers_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.clientusers
 (
+    id bigint NOT NULL DEFAULT nextval('clientusers_id_seq'::regclass),
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    CONSTRAINT client_users_pkey PRIMARY KEY (id)
+    ip character varying(17) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT clientusers_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.correctanswers
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    id bigint NOT NULL DEFAULT nextval('correctanswers_id_seq'::regclass),
     questionid bigint NOT NULL,
     answercorrect character varying(255) COLLATE pg_catalog."default" NOT NULL,
     correct boolean NOT NULL DEFAULT true,
-    CONSTRAINT correct_answers_pkey PRIMARY KEY (id)
+    CONSTRAINT correctanswers_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.quiestions
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    id bigint NOT NULL DEFAULT nextval('quiestions_id_seq'::regclass),
     question character varying(255) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT quiestions_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.quizes
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    id bigint NOT NULL DEFAULT nextval('quizes_id_seq'::regclass),
     userid bigint NOT NULL,
-    started timestamp(6) with time zone NOT NULL,
+    started timestamp with time zone NOT NULL,
     CONSTRAINT quizes_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.results
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    id bigint NOT NULL DEFAULT nextval('results_id_seq'::regclass),
     questionid bigint NOT NULL,
     answerid bigint NOT NULL,
     quizid bigint NOT NULL,
-    answered timestamp(6) with time zone NOT NULL,
-    point integer NOT NULL DEFAULT 0,
+    answered timestamp with time zone NOT NULL,
+    point bigint NOT NULL DEFAULT 0,
     CONSTRAINT results_pkey PRIMARY KEY (id)
 );
 
 ALTER TABLE IF EXISTS public.answers
-    ADD CONSTRAINT question_id FOREIGN KEY (quiestionid)
+    ADD CONSTRAINT fk_answers_quiestions FOREIGN KEY (quiestionid)
         REFERENCES public.quiestions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID;
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.correctanswers
-    ADD CONSTRAINT quiestion_fkey FOREIGN KEY (questionid)
+    ADD CONSTRAINT fk_correctanswers_quiestions FOREIGN KEY (questionid)
         REFERENCES public.quiestions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID;
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.quizes
-    ADD CONSTRAINT uswers_id FOREIGN KEY (userid)
+    ADD CONSTRAINT fk_quizes_clientusers FOREIGN KEY (userid)
         REFERENCES public.clientusers (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID;
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.results
-    ADD CONSTRAINT answer_id FOREIGN KEY (answerid)
+    ADD CONSTRAINT fk_results_answers FOREIGN KEY (answerid)
         REFERENCES public.answers (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID;
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.results
-    ADD CONSTRAINT question_id FOREIGN KEY (questionid)
+    ADD CONSTRAINT fk_results_quiestions FOREIGN KEY (questionid)
         REFERENCES public.quiestions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID;
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.results
-    ADD CONSTRAINT quiz_id FOREIGN KEY (quizid)
+    ADD CONSTRAINT fk_results_quizes FOREIGN KEY (quizid)
         REFERENCES public.quizes (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID;
+        ON DELETE NO ACTION;
 
 END;

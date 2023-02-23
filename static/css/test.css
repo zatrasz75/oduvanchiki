@@ -1,20 +1,21 @@
-body {
+.header {
     max-width: 1366px;
     max-height: 825px;
-    /* background-color: #C5C5C5; */
+    background-color: #FEF6F3;
 }
-
-.header {
-
+.section {
+    width:100%;
+    height:100%;
+    background-color: #FEF6F3;
 }
 
 .quiz-box {
-    margin: 146px 0 0 135px
+    padding: 146px 0 0 135px;
 }
 
 .quiz-header ul {
     line-height: 24px;
-    width: 214px;
+    /* width: 214px; */
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
@@ -36,7 +37,7 @@ body {
 }
 
 .button-test {
-    margin: 17px 0 47px 0;
+    padding: 17px 0 47px 0;
 
 }
 
@@ -52,4 +53,131 @@ body {
 
 #submit:active {
     background-color: #97A7DD;
+}
+
+.result {
+    padding: 100px 0 0 0;
+}
+
+.title-result {
+    text-align: center;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #000000;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 48px;
+    margin-bottom: 54px;
+}
+
+.result1 {
+    display: flex;
+    justify-content: space-around;
+}
+
+.info-result-p {
+    width: 615px;
+    height: 235px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.level {
+    margin-left: 45px;
+}
+
+.level p {
+    margin: -85px 0 0 39px;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 48px;
+}
+
+.level-2 {
+    margin-left: 220px;
+}
+
+.lavel-1 {
+    font-family: 'Work Sans';
+    margin-top: 50px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 48px;
+}
+
+.share {
+    position: absolute;
+}
+
+.share p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.share-img {
+    display: flex;
+}
+
+.share-img img {
+    margin: 16px 30px 0 0;
+}
+
+.appeal {
+    display: flex;
+    justify-content: space-between;
+    background-size: 100%;
+    background-color: #FDE4D3;
+    padding-top: 75px;
+    padding: 70px 0 0 195px;
+    margin-top: 165px;
+}
+
+.appeal button {
+    width: 320px;
+    height: 65px;
+}
+
+#application {
+    background-color: #F03F5A;
+}
+
+#application:hover {
+    background-color: #B45060;
+}
+
+#application:active {
+    background-color: #F893A3;
+}
+
+.appeal-text {
+    font-family: 'Inter';
+    font-style: normal;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.appeal-text button {
+    margin-top: -10px;
+}
+
+.appeal img {
+    margin-right: 180px;
+    padding-top: 20px;
+}
+
+.appeal-text p {
+    width: 484px;
+    height: 154px;
 }

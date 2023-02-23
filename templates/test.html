@@ -8,45 +8,78 @@
     <link href="./static/css/test.css" rel="stylesheet" type="text/css">
     <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
     <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
-    <title>Dandelions</title>
+    <title>Vorobeyenglish</title>
 </head>
 <body>
 <header class="header" di="HOME">
     <div class="section">
         <div class="section-header">
             <div class="logo">
-                <img src="./static/img/Иконка _Лого_ (1).svg">
+                <a href="./"><img src="./static/img/Иконка _Лого_ (1).svg"></a>
             </div>
             <nav>
                 <ul class="header-nav">
                     <li><a class="link" href="/">Преимущества теста</a></li>
                     <li><a class="link" href="/">Уровни знания языка</a></li>
                     <li><a class="link" href="#">Свяжитесь с нами</a></li>
+                    <li><a class="link" href="#">О проекте</a></li>
                 </ul>
             </nav>
         </div>
     </div>
-
+</header>
+<main>
+    <div class="section">
     {{if .Available}}
-    <form>
 
-        <div>
-            <p>Результат теста</p>
+<form class="result">
+    <div class="title-result">
+        <p>Ваш Результат</p>
+    </div>
+    <div class="result1">
+        <div class="level-2">
+            <div class="level">
+                <img src="./static/img/Ellipse 15.svg" alt="Result">
+                <p>15</p>
+            </div>
+            <div class="lavel-1">
+                <p>{{.Level}}</p>
+            </div>
+        </div>
+        <div class="">
+            <p class="info-result-p"><span style="font-weight: 600;"> {{.User}}</span>, Вы правильно ответили на {{.Point}} вопросов.
+                Ваш уровень владения английским языком соответствует стандарту <br><span style="font-weight: 600;">{{.Level}}</span> в соответствии
+                с рекомендациями, установленными Общеевропейской системой оценивания (CEFR).</p>
+            <div class="share">
+                <p>Поделитесь своим результатом</p>
+                <div class="share-img">
+                    <a href="https://vk.com/" target="_blank"><img src="./static/img/VK.svg" alt="VK"></a>
+                    <a href="https://ok.ru/" target="_blank"><img src="./static/img/odnoklassniki 1.svg" alt="odnoklassniki"></a>
+                    <!-- <img src="./static/img/instagram3 1.svg" alt="instagram"> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="appeal">
+        <div class="appeal-text">
+            <p><span style="font-weight: 600;">{{.User}}</span>, если Вы хотите прокачать свой английский на 2-3 уровня, Вы можете обратиться
+                к преподавателю проекта Vorobey English <span style="font-weight: 600;">[Имя Фамилия]</span>. </p>
+            <div class="button-test">
+                <button class="button test_button" id="submit">Узнать подробнее</button>
+            </div>
+            <div class="button-test">
+                <button class="button test_button" id="application">Оставить заявку</button>
+            </div>
         </div>
         <div>
-            <img src="./static/img/Ellipse 15.svg" alt="Result">
-
-            <p>Имя : {{.User}}</p>
-            <p>Правильных ответов : {{.Point}}</p>
-            <p>Знания Уровень: {{.Level}}</p>
-
+            <img src="./static/img/Group 82 1 1.svg" alt="">
         </div>
 
-    </form>
+    </div>
+</form>
     {{else}}
 
     <form class="quiz-box" id="quiz" action="./test" method="post">
-    <div class="quiz-box" id="quiz">
         <div class="quiz-header">
             <h2 id="question">{{.Question}}</h2>
             <ul>
@@ -81,10 +114,10 @@
         <div class="button-test">
             <button class="button test_button" id="submit" disabled>Проверить ответ</button>
         </div>
-    </div>
     </form>
     {{end}}
-</header>
+    </div>
+</main>
 <footer class="FOOTER">
     <div class="section">
         <div class="section-footer">
