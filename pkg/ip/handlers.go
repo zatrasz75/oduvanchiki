@@ -40,7 +40,7 @@ const (
 	Port     = 5432
 	Users    = "postgres"
 	Password = "rootroot"
-	Dbname   = "test" // Dandelions postgres testdb
+	Dbname   = "Dandelions" // Dandelions postgres testdb
 )
 
 var (
