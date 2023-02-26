@@ -7,50 +7,12 @@ import (
 	"html/template"
 	"log"
 	"math/rand"
+	"net"
 	"net/http"
+	schema "oduvanchiki/pkg/db"
 	"os"
 	"time"
 )
-
-type Quiestions struct {
-	Id       int
-	Question string
-}
-
-type Clientusers struct {
-	Id   int
-	Name string
-}
-
-type Answers struct {
-	Id          int
-	Answer1     string
-	Answer2     string
-	Answer3     string
-	Answer4     string
-	Quiestionid int
-}
-
-type Quizes struct {
-	Id      int
-	Userid  int
-	Started time.Time
-}
-
-type Correctanswers struct {
-	Id            int
-	Questionid    int
-	Answercorrect string
-	Correct       bool
-}
-
-type Results struct {
-	Questionid int
-	Answerid   int
-	Quizid     int
-	Answered   time.Time
-	Point      int
-}
 
 type ViewData struct {
 	User      string
@@ -74,16 +36,16 @@ type FormData struct {
 }
 
 const (
-	host     = "localhost"
-	port     = 5432
-	users    = "postgres"
-	password = "rootroot"
-	dbname   = "Dandelions" // Dandelions postgres testdb
+	Host     = "localhost"
+	Port     = 5432
+	Users    = "postgres"
+	Password = "rootroot"
+	Dbname   = "Dandelions" // Dandelions postgres testdb
 )
 
 var (
 	// Подключение к БД
-	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, port, users, password, dbname)
+	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", Host, Port, Users, Password, Dbname)
 )
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -150,21 +112,24 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Нет подключения к БД \n", err)
 	}
 
-	user := Clientusers{
+	user := schema.Clientusers{
 		Name: r.FormValue("name"),
 	}
+
+	// Получить ip-адрес клиента
+	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
 
 	// Номер теста
 	var numTest int
 
 	if user.Name != "" {
 		// Создать запись Clientusers
-		recordName := &Clientusers{Name: user.Name}
+		recordName := &schema.Clientusers{Name: user.Name, Ip: ip}
 		resultClient := db.Create(&recordName)
 
 		if resultClient.Error == nil {
 			inflog.Printf("В Clientusers создано количество записей %v\n", resultClient.RowsAffected)
-			inflog.Printf("Создана запись в Clientusers %v и получен id записи %v\n", recordName.Name, recordName.Id)
+			inflog.Printf("Создана запись в Clientusers %v с его ip %v и получен id записи %v\n", recordName.Name, recordName.Ip, recordName.Id)
 
 		} else {
 			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
@@ -173,7 +138,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		timeT := startTime()
 
 		//Создать запись Quizes
-		recordTest := Quizes{Userid: recordName.Id, Started: timeT}
+		recordTest := schema.Quizes{Userid: recordName.Id, Started: timeT}
 		resultQuiz := db.Create(&recordTest)
 
 		if resultQuiz.Error == nil {
@@ -211,6 +176,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 		errlog.Printf("Внутренняя ошибка сервера. %s", err)
 		http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
+
 }
 
 // FormTest Обработчик сохранения данных страницы с формой
@@ -234,15 +200,15 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/---------------------------------------------")
 
 	// Извлечение объектов, где поле id равно form.TestStart
-	var quizes Quizes
+	var quizes schema.Quizes
 	db.Where("id = ?", form.TestStart).Find(&quizes)
 
 	// Извлечение объектов, где поле answercorrect равно form.Answer
-	var correct Correctanswers
+	var correct schema.Correctanswers
 	db.Where("answercorrect = ?", form.Answer).Find(&correct)
 	inflog.Printf("Верный ответ = %v id = %v\n", correct.Correct, correct.Questionid)
 
-	var result Results
+	var result schema.Results
 	// Правильный ответ
 	if correct.Correct == true {
 		result.Point = 1
@@ -251,25 +217,25 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	if form.Questionid != "" {
 		timeT := startTime()
 
-		var inputQuestion Quiestions
+		var inputQuestion schema.Quiestions
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
 		db.Where("id = ?", form.Questionid).Find(&inputQuestion)
 
-		var inputAnswer Answers
+		var inputAnswer schema.Answers
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
 		db.Where("quiestionid = ?", form.Questionid).Find(&inputAnswer)
 
 		//Создать запись Results
-		db.Create(&Results{Questionid: inputQuestion.Id, Answerid: inputAnswer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
+		db.Create(&schema.Results{Questionid: inputQuestion.Id, Answerid: inputAnswer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
 		inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", inputQuestion.Id, inputAnswer.Id, quizes.Id, timeT, result.Point)
 	}
 
 	fmt.Println("/---------------------------------------------")
 
-	var user Clientusers
+	var user schema.Clientusers
 	var display ViewData
 
-	var point []Results
+	var point []schema.Results
 	db.Where("quizid = ?", form.TestStart).Find(&point)
 
 	if len(point) == 60 {
@@ -289,11 +255,11 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	var ress []Results
+	var ress []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	db.Where("quizid = ?", form.TestStart).Find(&ress)
 
-	var resFix Results
+	var resFix schema.Results
 	if form.Questionid != "" {
 		// Извлечение объектов, где поле questionid равно form.Questionid
 		db.Where("questionid = ?", form.Questionid).Find(&resFix)
@@ -308,14 +274,14 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("/---------------------------------------------")
 
-	var question Quiestions
-	var answer Answers
+	var question schema.Quiestions
+	var answer schema.Answers
 
 	// Извлечение всех объектов
-	var allq []Quiestions
+	var allq []schema.Quiestions
 	db.Find(&allq)
 
-	var resR []Results
+	var resR []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	db.Where("quizid = ?", form.TestStart).Find(&resR)
 
@@ -364,10 +330,11 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		errlog.Printf("Внутренняя ошибка сервера. %v", err)
 		http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
+
 }
 
 // Определяет есть такая запись или обновлена страница
-func bagUpdateFix(ress []Results, resFix int) bool {
+func bagUpdateFix(ress []schema.Results, resFix int) bool {
 	var fix bool
 
 	sl := make([]int, 0, 60)
@@ -403,7 +370,7 @@ func levelTest(point int) string {
 }
 
 // Считает количество правильных ответов
-func testresult(point []Results) int {
+func testresult(point []schema.Results) int {
 	var p int
 	for _, v := range point {
 		p += v.Point
@@ -413,7 +380,7 @@ func testresult(point []Results) int {
 }
 
 // Создает рандомно число
-func randomId(allq []Quiestions, resR []Results) (int, error) {
+func randomId(allq []schema.Quiestions, resR []schema.Results) (int, error) {
 
 	slQ := make([]int, 0, 100)
 	// Присвоение значений срезу

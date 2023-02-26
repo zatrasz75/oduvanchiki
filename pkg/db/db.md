@@ -14,7 +14,7 @@ IS_TEMPLATE = False;
 
 CREATE TABLE IF NOT EXISTS public.quiestions
 (
-id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+id bigint NOT NULL DEFAULT nextval('quiestions_id_seq'::regclass),
 question character varying(255) COLLATE pg_catalog."default" NOT NULL,
 CONSTRAINT quiestions_pkey PRIMARY KEY (id)
 )
@@ -28,18 +28,17 @@ OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.answers
 (
-id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+id bigint NOT NULL DEFAULT nextval('answers_id_seq'::regclass),
 answer1 character varying(255) COLLATE pg_catalog."default" NOT NULL,
 answer2 character varying(255) COLLATE pg_catalog."default" NOT NULL,
 answer3 character varying(255) COLLATE pg_catalog."default" NOT NULL,
 answer4 character varying(255) COLLATE pg_catalog."default" NOT NULL,
 quiestionid bigint NOT NULL,
-CONSTRAINT answer_pkey PRIMARY KEY (id),
-CONSTRAINT question_id FOREIGN KEY (quiestionid)
+CONSTRAINT answers_pkey PRIMARY KEY (id),
+CONSTRAINT fk_answers_quiestions FOREIGN KEY (quiestionid)
 REFERENCES public.quiestions (id) MATCH SIMPLE
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
-NOT VALID
 )
 
 TABLESPACE pg_default;
@@ -51,16 +50,15 @@ OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.correctanswers
 (
-id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+id bigint NOT NULL DEFAULT nextval('correctanswers_id_seq'::regclass),
 questionid bigint NOT NULL,
 answercorrect character varying(255) COLLATE pg_catalog."default" NOT NULL,
 correct boolean NOT NULL DEFAULT true,
-CONSTRAINT correct_answers_pkey PRIMARY KEY (id),
-CONSTRAINT quiestion_fkey FOREIGN KEY (questionid)
+CONSTRAINT correctanswers_pkey PRIMARY KEY (id),
+CONSTRAINT fk_correctanswers_quiestions FOREIGN KEY (questionid)
 REFERENCES public.quiestions (id) MATCH SIMPLE
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
-NOT VALID
 )
 
 TABLESPACE pg_default;
@@ -70,11 +68,13 @@ OWNER to postgres;
 
 # -- Table: public.clientusers
 
+
 CREATE TABLE IF NOT EXISTS public.clientusers
 (
+id bigint NOT NULL DEFAULT nextval('clientusers_id_seq'::regclass),
 name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-CONSTRAINT client_users_pkey PRIMARY KEY (id)
+ip character varying(17) COLLATE pg_catalog."default" NOT NULL,
+CONSTRAINT clientusers_pkey PRIMARY KEY (id)
 )
 
 TABLESPACE pg_default;
@@ -86,15 +86,14 @@ OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.quizes
 (
-id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+id bigint NOT NULL DEFAULT nextval('quizes_id_seq'::regclass),
 userid bigint NOT NULL,
-started timestamp(6) with time zone NOT NULL,
+started timestamp with time zone NOT NULL,
 CONSTRAINT quizes_pkey PRIMARY KEY (id),
-CONSTRAINT uswers_id FOREIGN KEY (userid)
+CONSTRAINT fk_quizes_clientusers FOREIGN KEY (userid)
 REFERENCES public.clientusers (id) MATCH SIMPLE
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
-NOT VALID
 )
 
 TABLESPACE pg_default;
@@ -106,28 +105,25 @@ OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.results
 (
-id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+id bigint NOT NULL DEFAULT nextval('results_id_seq'::regclass),
 questionid bigint NOT NULL,
 answerid bigint NOT NULL,
 quizid bigint NOT NULL,
-answered timestamp(6) with time zone NOT NULL,
-point integer NOT NULL DEFAULT 0,
+answered timestamp with time zone NOT NULL,
+point bigint NOT NULL DEFAULT 0,
 CONSTRAINT results_pkey PRIMARY KEY (id),
-CONSTRAINT answer_id FOREIGN KEY (answerid)
+CONSTRAINT fk_results_answers FOREIGN KEY (answerid)
 REFERENCES public.answers (id) MATCH SIMPLE
 ON UPDATE NO ACTION
-ON DELETE NO ACTION
-NOT VALID,
-CONSTRAINT question_id FOREIGN KEY (questionid)
+ON DELETE NO ACTION,
+CONSTRAINT fk_results_quiestions FOREIGN KEY (questionid)
 REFERENCES public.quiestions (id) MATCH SIMPLE
 ON UPDATE NO ACTION
-ON DELETE NO ACTION
-NOT VALID,
-CONSTRAINT quiz_id FOREIGN KEY (quizid)
+ON DELETE NO ACTION,
+CONSTRAINT fk_results_quizes FOREIGN KEY (quizid)
 REFERENCES public.quizes (id) MATCH SIMPLE
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
-NOT VALID
 )
 
 TABLESPACE pg_default;
