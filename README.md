@@ -51,4 +51,4 @@
 
 Frontend: HTML, CSS, JavaScript
 
-Backend: GO 1.20 , PostgreSQL 15 .
+Backend: GO 1.20, PostgreSQL v15
