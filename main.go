@@ -18,17 +18,25 @@ import (
 	"time"
 )
 
+const (
+	Host     = "host.docker.internal" // localhost
+	Port     = 49153                  // 5432
+	Users    = "postgres"
+	Password = "postgrespw" // rootroot
+	Dbname   = "Dandelions" // Dandelions
+)
+
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
 var (
 	// Подключение к БД
-	conn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", ip.Host, ip.Port, ip.Users, ip.Password, ip.Dbname)
+	conStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", Host, Port, Users, Password, Dbname)
 )
 
 func main() {
 
-	db, err := gorm.Open(postgres.Open(conn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(conStr), &gorm.Config{})
 	if err != nil {
 		panic("не удалось подключить базу данных")
 	}
@@ -111,6 +119,8 @@ func main() {
 
 	//---------------------------------------------------------
 
+	storage := ip.Storage{Db: db}
+
 	PORT := ":4000"
 
 	// Инициализируем FileServer, он будет обрабатывать
@@ -130,8 +140,8 @@ func main() {
 
 	router.HandleFunc("/", ip.Home).Methods("GET")
 	router.HandleFunc("/name", ip.NamePage).Methods("GET")
-	router.HandleFunc("/next_test", ip.NextTest).Methods("POST")
-	router.HandleFunc("/test", ip.FormTest).Methods("POST")
+	router.HandleFunc("/next_test", storage.NextTest).Methods("POST")
+	router.HandleFunc("/test", storage.FormTest).Methods("POST")
 
 	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
 
