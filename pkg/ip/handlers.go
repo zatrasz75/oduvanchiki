@@ -2,7 +2,6 @@ package ip
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"html/template"
 	"log"
@@ -13,6 +12,10 @@ import (
 	"os"
 	"time"
 )
+
+type Storage struct {
+	Db *gorm.DB
+}
 
 type ViewData struct {
 	User      string
@@ -34,19 +37,6 @@ type FormData struct {
 	Answer     string
 	TestStart  string
 }
-
-const (
-	Host     = "localhost"
-	Port     = 5432
-	Users    = "postgres"
-	Password = "rootroot"
-	Dbname   = "Dandelions"
-)
-
-var (
-	// Подключение к БД
-	connStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", Host, Port, Users, Password, Dbname)
-)
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -101,15 +91,10 @@ func NamePage(w http.ResponseWriter, r *http.Request) {
 }
 
 // NextTest Обработчик отображение страницы с формой
-func NextTest(w http.ResponseWriter, r *http.Request) {
+func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/next_test" {
 		http.NotFound(w, r)
 		return
-	}
-
-	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Нет подключения к БД \n", err)
 	}
 
 	user := schema.Clientusers{
@@ -125,7 +110,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 	if user.Name != "" {
 		// Создать запись Clientusers
 		recordName := &schema.Clientusers{Name: user.Name, Ip: ip}
-		resultClient := db.Create(&recordName)
+		resultClient := s.Db.Create(&recordName)
 
 		if resultClient.Error == nil {
 			inflog.Printf("В Clientusers создано количество записей %v\n", resultClient.RowsAffected)
@@ -139,7 +124,7 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: recordName.Id, Started: timeT}
-		resultQuiz := db.Create(&recordTest)
+		resultQuiz := s.Db.Create(&recordTest)
 
 		if resultQuiz.Error == nil {
 			inflog.Printf("В Quizes создано количество записей %v\n", resultQuiz.RowsAffected)
@@ -180,15 +165,10 @@ func NextTest(w http.ResponseWriter, r *http.Request) {
 }
 
 // FormTest Обработчик сохранения данных страницы с формой
-func FormTest(w http.ResponseWriter, r *http.Request) {
+func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/test" {
 		http.NotFound(w, r)
 		return
-	}
-
-	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Нет подключения к БД", err)
 	}
 
 	form := FormData{
@@ -201,11 +181,11 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 	// Извлечение объектов, где поле id равно form.TestStart
 	var quizes schema.Quizes
-	db.Where("id = ?", form.TestStart).Find(&quizes)
+	s.Db.Where("id = ?", form.TestStart).Find(&quizes)
 
 	// Извлечение объектов, где поле answercorrect равно form.Answer
 	var correct schema.Correctanswers
-	db.Where("answercorrect = ?", form.Answer).Find(&correct)
+	s.Db.Where("answercorrect = ?", form.Answer).Find(&correct)
 	inflog.Printf("Верный ответ = %v id = %v\n", correct.Correct, correct.Questionid)
 
 	var result schema.Results
@@ -219,14 +199,14 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 		var inputQuestion schema.Quiestions
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
-		db.Where("id = ?", form.Questionid).Find(&inputQuestion)
+		s.Db.Where("id = ?", form.Questionid).Find(&inputQuestion)
 
 		var inputAnswer schema.Answers
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
-		db.Where("quiestionid = ?", form.Questionid).Find(&inputAnswer)
+		s.Db.Where("quiestionid = ?", form.Questionid).Find(&inputAnswer)
 
 		//Создать запись Results
-		db.Create(&schema.Results{Questionid: inputQuestion.Id, Answerid: inputAnswer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
+		s.Db.Create(&schema.Results{Questionid: inputQuestion.Id, Answerid: inputAnswer.Id, Quizid: quizes.Id, Answered: timeT, Point: result.Point})
 		inflog.Printf("Запись результата %v , %v , %v , %v , %v \n", inputQuestion.Id, inputAnswer.Id, quizes.Id, timeT, result.Point)
 	}
 
@@ -236,7 +216,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 	var display ViewData
 
 	var point []schema.Results
-	db.Where("quizid = ?", form.TestStart).Find(&point)
+	s.Db.Where("quizid = ?", form.TestStart).Find(&point)
 
 	if len(point) == 60 {
 		display.Available = true
@@ -246,7 +226,7 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		inflog.Printf("Правильных ответов %v\n", result.Point)
 
 		// Извлечение объектов, где поле id равно quizes.Userid
-		db.Where("id = ?", quizes.Userid).Find(&user)
+		s.Db.Where("id = ?", quizes.Userid).Find(&user)
 		inflog.Printf("Имя : %v\n", user.Name)
 
 		level := levelTest(result.Point)
@@ -257,12 +237,12 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 	var ress []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
-	db.Where("quizid = ?", form.TestStart).Find(&ress)
+	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
 
 	var resFix schema.Results
 	if form.Questionid != "" {
 		// Извлечение объектов, где поле questionid равно form.Questionid
-		db.Where("questionid = ?", form.Questionid).Find(&resFix)
+		s.Db.Where("questionid = ?", form.Questionid).Find(&resFix)
 	}
 	cheater := bagUpdateFix(ress, resFix.Questionid)
 	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
@@ -279,14 +259,15 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 
 	// Извлечение всех объектов
 	var allq []schema.Quiestions
-	db.Find(&allq)
+	s.Db.Find(&allq)
 
 	var resR []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
-	db.Where("quizid = ?", form.TestStart).Find(&resR)
+	s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
 
 	var strId int
 	if len(point) <= 59 {
+		var err error
 		// Рандомно выбираем первичный ключ
 		strId, err = randomId(allq, resR)
 		if err != nil {
@@ -295,10 +276,10 @@ func FormTest(w http.ResponseWriter, r *http.Request) {
 		inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
 
 		// Извлечение объекта с помощью первичного ключа
-		db.First(&question, strId)
+		s.Db.First(&question, strId)
 
 		// Извлечение объектов, где поле quiestionid равно первичному ключу strId
-		db.Where("quiestionid = ?", strId).Find(&answer)
+		s.Db.Where("quiestionid = ?", strId).Find(&answer)
 	}
 
 	data := ViewData{
