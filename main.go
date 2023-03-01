@@ -19,11 +19,11 @@ import (
 )
 
 const (
-	Host     = "host.docker.internal" // localhost
-	Port     = 49153                  // 5432
+	Host     = "localhost"
+	Port     = 5432
 	Users    = "postgres"
-	Password = "postgrespw" // rootroot
-	Dbname   = "Dandelions" // Dandelions
+	Password = "rootroot"
+	Dbname   = "Dandelions"
 )
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
