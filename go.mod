@@ -4,7 +4,9 @@ go 1.19
 
 require (
 	github.com/gorilla/mux v1.8.0
-	github.com/lib/pq v1.10.7
+	github.com/mileusna/useragent v1.2.1
+	github.com/pattfy/useragent v1.0.0
+	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	gorm.io/driver/postgres v1.4.6
 	gorm.io/gorm v1.24.3
 )

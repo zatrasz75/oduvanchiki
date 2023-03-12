@@ -26,9 +26,11 @@ type Correctanswers struct {
 }
 
 type Clientusers struct {
-	Id   int    `gorm:"primaryKey"`
-	Name string `gorm:"not null;size:255"`
-	Ip   string `gorm:"not null;size:17"`
+	Id       int    `gorm:"primaryKey"`
+	Name     string `gorm:"not null;size:255"`
+	Ip       string `gorm:"not null;size:17"`
+	Browser  string `gorm:"not null;size:20"`
+	Platform string `gorm:"size:20"`
 }
 
 type Quizes struct {

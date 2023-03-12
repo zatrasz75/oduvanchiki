@@ -2,14 +2,18 @@ package ip
 
 import (
 	"fmt"
+	"github.com/mileusna/useragent"
+	"github.com/pattfy/useragent/browser"
+	"github.com/pattfy/useragent/platform"
+	"github.com/tomasen/realip"
 	"gorm.io/gorm"
 	"html/template"
 	"log"
 	"math/rand"
-	"net"
 	"net/http"
 	schema "oduvanchiki/pkg/db"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -36,6 +40,10 @@ type FormData struct {
 	Questionid string
 	Answer     string
 	TestStart  string
+}
+
+type Browser struct {
+	Brows string
 }
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -100,21 +108,31 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	user := schema.Clientusers{
 		Name: r.FormValue("name"),
 	}
+	// Получить ip-адрес пользователя
+	//ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+	ip := realip.FromRequest(r) // --------------------------------------
 
-	// Получить ip-адрес клиента
-	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+	// userAgents Получает информацию о пользователе
+	userAgents := r.Header.Get("User-Agent")
+
+	// Получить браузер пользователя
+	brows := agentBrowser(userAgents)
+
+	// Получить платформу пользователя
+	p := platform.Parse(userAgents)
+	plat := p.Name() + " " + p.Version()
 
 	// Номер теста
 	var numTest int
 
 	if user.Name != "" {
 		// Создать запись Clientusers
-		recordName := &schema.Clientusers{Name: user.Name, Ip: ip}
+		recordName := &schema.Clientusers{Name: user.Name, Ip: ip, Browser: brows, Platform: plat}
 		resultClient := s.Db.Create(&recordName)
 
 		if resultClient.Error == nil {
 			inflog.Printf("В Clientusers создано количество записей %v\n", resultClient.RowsAffected)
-			inflog.Printf("Создана запись в Clientusers %v с его ip %v и получен id записи %v\n", recordName.Name, recordName.Ip, recordName.Id)
+			inflog.Printf("Создана запись в Clientusers %v , с его ip %v , браузер %v , платформы %v и получен id записи %v\n", recordName.Name, recordName.Ip, recordName.Browser, recordName.Platform, recordName.Id)
 
 		} else {
 			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
@@ -336,17 +354,20 @@ func bagUpdateFix(ress []schema.Results, resFix int) bool {
 func levelTest(point int) string {
 	var ups string
 	switch {
-	case point <= 15:
-		ups = "A1"
-	case point <= 25:
-		ups = "A2"
-	case point <= 40:
-		ups = "B1"
-	case point <= 55:
-		ups = "B2"
-	case point > 55:
-		ups = "C1"
+	case point <= 14:
+		ups = "A1 Elementary"
+	case point <= 24:
+		ups = "A2 Pre-intermediate"
+	case point <= 39:
+		ups = "B1 Intermediate"
+	case point <= 49:
+		ups = "B2 Upper Intermediate"
+	case point > 54:
+		ups = "C1 Advanced"
+	case point >= 55:
+		ups = "C2 Proficiency"
 	}
+
 	return ups
 }
 
@@ -416,4 +437,29 @@ func startTime() time.Time {
 	time.Unix(tUnix, 0)
 
 	return time.Now()
+}
+
+// Определяет браузер пользователя
+func agentBrowser(ua string) string {
+	var br string
+
+	b := browser.Parse(ua)
+	switch true {
+	case strings.Contains(b.FullVersion(), "111.0.0.0"):
+		br = useragent.Chrome
+	case strings.Contains(b.FullVersion(), "108.0.0.0"):
+		br = "Yandex"
+	case strings.Contains(b.FullVersion(), "95.0.0.0"):
+		br = useragent.Opera
+	case strings.Contains(b.FullVersion(), "110.0.0.0"):
+		br = useragent.Edge
+	case strings.Contains(b.FullVersion(), "110.0"):
+		br = useragent.Firefox
+	case strings.Contains(b.FullVersion(), "5.1.7"):
+		br = useragent.Safari
+	default:
+		br = b.Name()
+	}
+
+	return br
 }
