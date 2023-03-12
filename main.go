@@ -20,7 +20,7 @@ import (
 
 const (
 	Host     = "host.docker.internal" // localhost
-	Port     = 49153                  // 5432
+	Port     = 49155                  // 5432
 	Users    = "postgres"
 	Password = "postgrespw" // rootroot
 	Dbname   = "Dandelions" // Dandelions
