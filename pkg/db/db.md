@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS public.clientusers
 id bigint NOT NULL DEFAULT nextval('clientusers_id_seq'::regclass),
 name character varying(255) COLLATE pg_catalog."default" NOT NULL,
 ip character varying(17) COLLATE pg_catalog."default" NOT NULL,
+browser character varying(20) COLLATE pg_catalog."default" NOT NULL,
 CONSTRAINT clientusers_pkey PRIMARY KEY (id)
 )
 

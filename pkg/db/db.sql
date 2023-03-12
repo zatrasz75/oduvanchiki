@@ -3,10 +3,9 @@ DROP TABLE IF EXISTS results, quizes, clientusers, correctanswers, answers, quie
 
 BEGIN;
 
-
 CREATE TABLE IF NOT EXISTS public.answers
 (
-    id bigint NOT NULL DEFAULT nextval('answers_id_seq'::regclass),
+    id bigint NOT NULL,
     answer1 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     answer2 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     answer3 character varying(255) COLLATE pg_catalog."default" NOT NULL,
@@ -17,15 +16,17 @@ CREATE TABLE IF NOT EXISTS public.answers
 
 CREATE TABLE IF NOT EXISTS public.clientusers
 (
-    id bigint NOT NULL DEFAULT nextval('clientusers_id_seq'::regclass),
+    id bigint NOT NULL,
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     ip character varying(17) COLLATE pg_catalog."default" NOT NULL,
+    browser character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    platform character varying(20) COLLATE pg_catalog."default",
     CONSTRAINT clientusers_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.correctanswers
 (
-    id bigint NOT NULL DEFAULT nextval('correctanswers_id_seq'::regclass),
+    id bigint NOT NULL,
     questionid bigint NOT NULL,
     answercorrect character varying(255) COLLATE pg_catalog."default" NOT NULL,
     correct boolean NOT NULL DEFAULT true,
@@ -34,14 +35,14 @@ CREATE TABLE IF NOT EXISTS public.correctanswers
 
 CREATE TABLE IF NOT EXISTS public.quiestions
 (
-    id bigint NOT NULL DEFAULT nextval('quiestions_id_seq'::regclass),
+    id bigint NOT NULL,
     question character varying(255) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT quiestions_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.quizes
 (
-    id bigint NOT NULL DEFAULT nextval('quizes_id_seq'::regclass),
+    id bigint NOT NULL,
     userid bigint NOT NULL,
     started timestamp with time zone NOT NULL,
     CONSTRAINT quizes_pkey PRIMARY KEY (id)
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS public.quizes
 
 CREATE TABLE IF NOT EXISTS public.results
 (
-    id bigint NOT NULL DEFAULT nextval('results_id_seq'::regclass),
+    id bigint NOT NULL,
     questionid bigint NOT NULL,
     answerid bigint NOT NULL,
     quizid bigint NOT NULL,
