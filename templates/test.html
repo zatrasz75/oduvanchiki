@@ -21,7 +21,7 @@
                 <ul class="header-nav">
                     <li><a class="link" href="/">Преимущества теста</a></li>
                     <li><a class="link" href="/">Уровни знания языка</a></li>
-                    <li><a class="link" href="#">Свяжитесь с нами</a></li>
+                    <li><a class="link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a></li>
                     <li><a class="link" href="#">О проекте</a></li>
                 </ul>
             </nav>
@@ -53,8 +53,10 @@
             <div class="share">
                 <p>Поделитесь своим результатом</p>
                 <div class="share-img">
-                    <a href="https://vk.com/" target="_blank"><img src="./static/img/VK.svg" alt="VK"></a>
-                    <a href="https://ok.ru/" target="_blank"><img src="./static/img/odnoklassniki 1.svg" alt="odnoklassniki"></a>
+                    <script src="https://yastatic.net/share2/share.js"></script>
+                    <div class="ya-share2" data-curtain data-shape="round" data-services="vkontakte,odnoklassniki,telegram"></div>
+                    <!-- <a href="https://vk.com/" target="_blank"><img src="./static/img/VK.svg" alt="VK"></a>
+                    <a href="https://ok.ru/" target="_blank"><img src="./static/img/odnoklassniki 1.svg" alt="odnoklassniki"></a> -->
                 </div>
             </div>
         </div>
@@ -114,6 +116,17 @@
             <button class="button test_button" id="submit" disabled>Проверить ответ</button>
         </div>
     </form>
+<script>
+function validateForm(Str) {
+mystring=document.getElementById('quiz').value; 
+  if(!mystring.match(/\S/)){
+    alert ('Please Enter a String.Field cannot be empty');
+  return false;
+  }else{
+    return true;
+  }
+}
+</script>
     {{end}}
     </div>
 </main>
@@ -121,15 +134,15 @@
     <div class="section-footer">
             <div class="footer-logo">
                 <a href="./"><img src="./static/img/Vector (3).svg"></a>
-                <p class="footer-logo-p">© Vorobey English 2023</p>
-                <p class="footer-logo-p2">Все права защищены</p>
+                <p class="footer-logo-p">Image by www.freepik.com</p>
+                <p class="footer-logo-p2">© Vorobey English 2023. Все права защищены</p>
             </div>
             <div class="footer-navi">
                 <nav>
                     <ul class="footer-nav">
-                        <li><a class="footer-link" href="#HOME">Преимущества теста</a></li>
-                        <li><a class="footer-link" href="#HOME">Уровни знания языка</a></li>
-                        <li><a class="footer-link" href="#HOME">Свяжитесь с нами</a></li>
+                        <li><a class="footer-link" href="/">Преимущества теста</a></li>
+                        <li><a class="footer-link" href="/">Уровни знания языка</a></li>
+                        <li><a class="footer-link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a></li>
                         <li><a class="footer-link" href="#">О проекте</a></li>
                     </ul>
                 </nav>
