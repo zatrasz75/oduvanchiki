@@ -4,9 +4,6 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
-	"github.com/gorilla/mux"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	schema "oduvanchiki/pkg/db"
@@ -16,6 +13,10 @@ import (
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/gorilla/mux"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
@@ -47,6 +48,7 @@ func main() {
 		errlog.Printf("Не удалось удалить таблицы", err)
 		return
 	}
+
 	err = db.Migrator().DropTable(&schema.Quiestions{}, &schema.Answers{}, &schema.Correctanswers{})
 	if err != nil {
 		errlog.Printf("Не удалось удалить таблицы %v", err)
