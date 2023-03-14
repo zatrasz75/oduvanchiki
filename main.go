@@ -19,10 +19,10 @@ import (
 )
 
 const (
-	Host     = "host.docker.internal" // localhost
-	Port     = 49155                  // 5432
+	Host     = "localhost" // localhost  host.docker.internal
+	Port     = 5432        // 5432  49153
 	Users    = "postgres"
-	Password = "postgrespw" // rootroot
+	Password = "rootroot"   // rootroot  postgrespw
 	Dbname   = "Dandelions" // Dandelions
 )
 
@@ -41,12 +41,12 @@ func main() {
 		panic("не удалось подключить базу данных")
 	}
 
-	// Удалить таблицы, если они существуют
-	err = db.Migrator().DropTable(&schema.Results{}, &schema.Quizes{}, &schema.Clientusers{})
-	if err != nil {
-		errlog.Printf("Не удалось удалить таблицы", err)
-		return
-	}
+	//// Удалить таблицы, если они существуют
+	//err = db.Migrator().DropTable(&schema.Results{}, &schema.Quizes{}, &schema.Clientusers{})
+	//if err != nil {
+	//	errlog.Printf("Не удалось удалить таблицы", err)
+	//	return
+	//}
 	err = db.Migrator().DropTable(&schema.Quiestions{}, &schema.Answers{}, &schema.Correctanswers{})
 	if err != nil {
 		errlog.Printf("Не удалось удалить таблицы %v", err)

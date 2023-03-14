@@ -13,6 +13,7 @@ import (
 	"net/http"
 	schema "oduvanchiki/pkg/db"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -266,9 +267,20 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
 
 	if cheater == true {
-		display.Available = true
+		var quiz schema.Quizes
+		s.Db.Where("id = ?", form.TestStart).Find(&quiz)
+		s.Db.Where("id = ?", quizes.Userid).Find(&user)
+		timeT := startTime()
+
+		//Создать запись Quizes
+		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
+		s.Db.Create(&recordTest)
+		s.Db.First(&quiz)
+		// Меняем номер теста на следующий и начинаем сначала.
+		form.TestStart = strconv.Itoa(recordTest.Id)
+
+		inflog.Println(" Меняем номер теста на следующий и начинаем сначала.")
 	}
-	inflog.Printf("Available %v\n", display.Available)
 
 	fmt.Println("/---------------------------------------------")
 
@@ -282,6 +294,8 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	var resR []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
+
+	fmt.Printf("длина нужного массива %v\n", len(resR)) // ======================================================
 
 	var strId int
 	if len(point) <= 59 {
