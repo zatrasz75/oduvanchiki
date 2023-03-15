@@ -10,7 +10,7 @@
 }
 
 .quiz-box {
-    padding: 146px 0 0 135px;
+    padding: 116px 0 0 135px;
 }
 
 .quiz-header ul {
@@ -34,6 +34,10 @@
 
 .quiz-header h2 {
     margin-bottom: 40px;
+}
+
+.set {
+    padding: 0 0 30px 0;
 }
 
 .button-test {
@@ -129,7 +133,6 @@
 
 .share-img {
     display: flex;
-    padding: 25px 0px 0 0;
 }
 
 .share-img img {
@@ -137,9 +140,12 @@
 }
 
 .ya-share2 {
-    margin: 25px 52px 0 0;
+    margin: 5px 52px 0 0;
 }
 
+.ya-share2__link {
+    margin: 0 20px 0 20px;
+}
 .appeal {
     display: flex;
     justify-content: space-between;

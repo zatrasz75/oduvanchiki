@@ -82,6 +82,7 @@
 
     <form class="quiz-box" id="quiz" action="./test" method="post">
         <div class="quiz-header">
+            <p class="set">1/60</p>
             <h2 id="question">{{.Question}}</h2>
             <ul>
                 <li>
@@ -116,7 +117,7 @@
             <button class="button test_button" id="submit" disabled>Проверить ответ</button>
         </div>
     </form>
-<script>
+<!-- <script>
 function validateForm(Str) {
 mystring=document.getElementById('quiz').value; 
   if(!mystring.match(/\S/)){
@@ -126,7 +127,7 @@ mystring=document.getElementById('quiz').value;
     return true;
   }
 }
-</script>
+</script> -->
     {{end}}
     </div>
 </main>
