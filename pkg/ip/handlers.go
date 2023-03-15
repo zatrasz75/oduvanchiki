@@ -2,11 +2,6 @@ package ip
 
 import (
 	"fmt"
-	"github.com/mileusna/useragent"
-	"github.com/pattfy/useragent/browser"
-	"github.com/pattfy/useragent/platform"
-	"github.com/tomasen/realip"
-	"gorm.io/gorm"
 	"html/template"
 	"log"
 	"math/rand"
@@ -16,6 +11,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/mileusna/useragent"
+	"github.com/pattfy/useragent/browser"
+	"github.com/pattfy/useragent/platform"
+	"github.com/tomasen/realip"
+	"gorm.io/gorm"
 )
 
 type Storage struct {
