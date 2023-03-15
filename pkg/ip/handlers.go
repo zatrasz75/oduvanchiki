@@ -2,11 +2,6 @@ package ip
 
 import (
 	"fmt"
-	"github.com/mileusna/useragent"
-	"github.com/pattfy/useragent/browser"
-	"github.com/pattfy/useragent/platform"
-	"github.com/tomasen/realip"
-	"gorm.io/gorm"
 	"html/template"
 	"log"
 	"math/rand"
@@ -16,6 +11,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/mileusna/useragent"
+	"github.com/pattfy/useragent/browser"
+	"github.com/pattfy/useragent/platform"
+	"github.com/tomasen/realip"
+	"gorm.io/gorm"
 )
 
 type Storage struct {
@@ -23,18 +24,19 @@ type Storage struct {
 }
 
 type ViewData struct {
-	User      string
-	Id        int
-	Question  string
-	Answer1   string
-	Answer2   string
-	Answer3   string
-	Answer4   string
-	TestStart int
-	TestId    string
-	Available bool
-	Point     int
-	Level     string
+	User       string
+	Id         int
+	Question   string
+	Answer1    string
+	Answer2    string
+	Answer3    string
+	Answer4    string
+	TestStart  int
+	TestId     string
+	Available  bool
+	Point      int
+	Level      string
+	NumberTest int
 }
 
 type FormData struct {
@@ -99,7 +101,7 @@ func NamePage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// NextTest Обработчик отображение страницы с формой
+// NextTest Обработчик отображение страницы с формой.
 func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/next_test" {
 		http.NotFound(w, r)
@@ -315,17 +317,18 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := ViewData{
-		Available: display.Available,
-		User:      user.Name,
-		Point:     result.Point,
-		Level:     display.Level,
-		TestId:    form.TestStart,
-		Question:  question.Question,
-		Id:        question.Id,
-		Answer1:   answer.Answer1,
-		Answer2:   answer.Answer2,
-		Answer3:   answer.Answer3,
-		Answer4:   answer.Answer4,
+		Available:  display.Available,
+		User:       user.Name,
+		Point:      result.Point,
+		Level:      display.Level,
+		TestId:     form.TestStart,
+		NumberTest: len(resR),
+		Question:   question.Question,
+		Id:         question.Id,
+		Answer1:    answer.Answer1,
+		Answer2:    answer.Answer2,
+		Answer3:    answer.Answer3,
+		Answer4:    answer.Answer4,
 	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
@@ -344,6 +347,30 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Внутренняя ошибка сервера", 500)
 	}
 
+}
+
+// Customer Обработчик отображение страницы о клиенте.
+func Customer(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/info-customer" {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
+	ts, err := template.ParseFiles("./templates/info-customer.html")
+	if err != nil {
+		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
+		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
+		return
+	}
+	// Затем мы используем метод Execute() для записи содержимого
+	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
+	// возможность отправки динамических данных в шаблон.
+	err = ts.Execute(w, nil)
+	if err != nil {
+		errlog.Printf("Внутренняя ошибка сервера. %s", err)
+		http.Error(w, "Внутренняя ошибка сервера", 500)
+	}
 }
 
 // Определяет есть такая запись или обновлена страница
