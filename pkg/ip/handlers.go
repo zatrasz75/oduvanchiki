@@ -156,7 +156,6 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
-
 		errlog.Print("Ошибка ввода имени")
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
@@ -174,6 +173,7 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
 		return
 	}
+
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
