@@ -15,8 +15,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 const (
@@ -36,26 +34,29 @@ var (
 )
 
 func main() {
-
-	db, err := gorm.Open(postgres.Open(conStr), &gorm.Config{})
+	// Соединение с БД.
+	s, err := ip.New(conStr)
 	if err != nil {
 		panic("не удалось подключить базу данных")
 	}
+	if err != nil {
+		errlog.Fatal("Нет подключения к БД \n", err.Error())
+	}
 
 	// Удалить таблицы, если они существуют
-	err = db.Migrator().DropTable(&schema.Results{}, &schema.Quizes{}, &schema.Clientusers{})
+	err = s.Db.Migrator().DropTable(&schema.Results{}, &schema.Quizes{}, &schema.Clientusers{})
 	if err != nil {
 		errlog.Printf("Не удалось удалить таблицы", err)
 		return
 	}
 
-	err = db.Migrator().DropTable(&schema.Quiestions{}, &schema.Answers{}, &schema.Correctanswers{})
+	err = s.Db.Migrator().DropTable(&schema.Quiestions{}, &schema.Answers{}, &schema.Correctanswers{})
 	if err != nil {
 		errlog.Printf("Не удалось удалить таблицы %v", err)
 	}
 
 	// Перенос схемы в таблицу
-	err = db.AutoMigrate(&schema.Quiestions{}, &schema.Correctanswers{}, &schema.Answers{})
+	err = s.Db.AutoMigrate(&schema.Quiestions{}, &schema.Correctanswers{}, &schema.Answers{})
 	if err != nil {
 		errlog.Printf("Не удалось перенести схему %v", err)
 	}
@@ -72,7 +73,7 @@ func main() {
 		}
 		question.Id = v.Id
 		question.Question = v.Question
-		result := db.Create(&question)
+		result := s.Db.Create(&question)
 		inflog.Printf("Создана %v запись Quiestions :\n %v\n", result.RowsAffected, v.Question)
 	}
 
@@ -89,7 +90,7 @@ func main() {
 		correct.Id = v.Id
 		correct.Questionid = v.Questionid
 		correct.Answercorrect = v.Answercorrect
-		result := db.Create(&correct)
+		result := s.Db.Create(&correct)
 		inflog.Printf("Создана %v запись Correctanswers :\n %v\n", result.RowsAffected, v.Answercorrect)
 	}
 
@@ -109,19 +110,17 @@ func main() {
 		answer.Answer3 = v.Answer3
 		answer.Answer4 = v.Answer4
 		answer.Quiestionid = v.Quiestionid
-		result := db.Create(&answer)
+		result := s.Db.Create(&answer)
 		inflog.Printf("Создана %v запись Answers :\n %v, %v, %v, %v\n", result.RowsAffected, v.Answer1, v.Answer2, v.Answer3, v.Answer4)
 	}
 
 	// Перенос схемы в таблицу
-	err = db.AutoMigrate(&schema.Clientusers{}, &schema.Quizes{}, &schema.Results{})
+	err = s.Db.AutoMigrate(&schema.Clientusers{}, &schema.Quizes{}, &schema.Results{})
 	if err != nil {
 		errlog.Printf("Не удалось перенести схему %v", err)
 	}
 
 	//---------------------------------------------------------
-
-	storage := ip.Storage{Db: db}
 
 	PORT := ":4000"
 
@@ -141,9 +140,8 @@ func main() {
 	}
 
 	router.HandleFunc("/", ip.Home).Methods("GET")
-	router.HandleFunc("/name", ip.NamePage).Methods("GET")
-	router.HandleFunc("/next_test", storage.NextTest).Methods("POST")
-	router.HandleFunc("/test", storage.FormTest).Methods("POST")
+	router.HandleFunc("/next_test", s.NextTest).Methods("POST")
+	router.HandleFunc("/test", s.FormTest).Methods("POST")
 	router.HandleFunc("/info-customer", ip.Customer).Methods("GET")
 
 	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
