@@ -110,6 +110,9 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	if strName != "" {
 		display.Available = true
 
+		// Удаляем случайные пробелы вначале и в конце строки
+		nameUser := strings.TrimSpace(user.Name)
+
 		// Получить ip-адрес пользователя
 		ip := realip.FromRequest(r)
 
@@ -124,7 +127,7 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 		plat := p.Name() + " " + p.Version()
 
 		// Создать запись Clientusers
-		recordName := &schema.Clientusers{Name: user.Name, Ip: ip, Browser: brows, Platform: plat}
+		recordName := &schema.Clientusers{Name: nameUser, Ip: ip, Browser: brows, Platform: plat}
 		resultClient := s.Db.Create(&recordName)
 
 		if resultClient.Error == nil {
