@@ -2,6 +2,7 @@ package ip
 
 import (
 	"fmt"
+	"gorm.io/driver/postgres"
 	"html/template"
 	"log"
 	"math/rand"
@@ -21,6 +22,18 @@ import (
 
 type Storage struct {
 	Db *gorm.DB
+}
+
+// New Конструктор.
+func New(conStr string) (*Storage, error) {
+	db, err := gorm.Open(postgres.Open(conStr), &gorm.Config{})
+	if err != nil {
+		return nil, nil
+	}
+	s := Storage{
+		Db: db,
+	}
+	return &s, nil
 }
 
 type ViewData struct {
@@ -76,31 +89,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// NamePage Обработчик отображение страницы с формой ввода имени.
-func NamePage(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/name" {
-		http.NotFound(w, r)
-		return
-	}
-
-	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
-	ts, err := template.ParseFiles("./templates/name.html")
-	if err != nil {
-		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
-		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
-		return
-	}
-
-	// Затем мы используем метод Execute() для записи содержимого
-	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
-	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, nil)
-	if err != nil {
-		errlog.Printf("Внутренняя ошибка сервера. %s", err)
-		http.Error(w, "внутренняя ошибка сервера", 500)
-	}
-}
-
 // NextTest Обработчик отображение страницы с формой.
 func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/next_test" {
@@ -111,24 +99,30 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	user := schema.Clientusers{
 		Name: r.FormValue("name"),
 	}
-	// Получить ip-адрес пользователя
-	//ip, _, _ := net.SplitHostPort(r.RemoteAddr)
-	ip := realip.FromRequest(r) // --------------------------------------
-
-	// userAgents Получает информацию о пользователе
-	userAgents := r.Header.Get("User-Agent")
-
-	// Получить браузер пользователя
-	brows := agentBrowser(userAgents)
-
-	// Получить платформу пользователя
-	p := platform.Parse(userAgents)
-	plat := p.Name() + " " + p.Version()
+	// Удаляем пробелы, что бы посмотреть не пустое ли имя.
+	strName := strings.ReplaceAll(user.Name, " ", "")
 
 	// Номер теста
 	var numTest int
 
-	if user.Name != "" {
+	var display ViewData
+
+	if strName != "" {
+		display.Available = true
+
+		// Получить ip-адрес пользователя
+		ip := realip.FromRequest(r)
+
+		// userAgents Получает информацию о пользователе
+		userAgents := r.Header.Get("User-Agent")
+
+		// Получить браузер пользователя
+		brows := agentBrowser(userAgents)
+
+		// Получить платформу пользователя
+		p := platform.Parse(userAgents)
+		plat := p.Name() + " " + p.Version()
+
 		// Создать запись Clientusers
 		recordName := &schema.Clientusers{Name: user.Name, Ip: ip, Browser: brows, Platform: plat}
 		resultClient := s.Db.Create(&recordName)
@@ -154,14 +148,15 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 		} else {
 			errlog.Printf("Не удалось создать запись теста %v\n", recordTest.Id)
 		}
+	}
+	if strName == "" {
+		display.Available = false
 
-	} else {
-		errlog.Print("Ошибка ввода имени")
-		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
-		return
+		inflog.Print("В место имени введены пробелы.")
 	}
 
 	data := ViewData{
+		Available: display.Available,
 		User:      user.Name,
 		TestStart: numTest,
 	}
