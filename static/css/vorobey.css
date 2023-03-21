@@ -1,0 +1,169 @@
+.vorobey-p{
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 48px;
+    /* position: absolute;
+    width: 458px; */
+    height: 48px;
+    /* left: 454px;
+    top: 108px;
+    display: flex; */
+    align-items: center;
+    text-align: center;
+    font-variant: small-caps;
+    color: #000000;
+    padding: 10px 0 57px 0;
+}
+
+.vorobey img {
+    padding: 14px 0 0 101px;
+}
+
+.foto-vorobey {
+    display: flex;
+    justify-content: flex-end;
+    padding-left: 263px;
+}
+
+.foto-vorobey p {
+    width: 266px;
+    left: 394px;
+    top: 213px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #000000;
+}
+
+.foto-vorobey img {
+    margin: -80px 5px 0 0;
+}
+
+.vorobey-bloc1 {
+    display: flex;
+    justify-content: space-between;
+  }
+
+.help-p {
+
+    left: 693px;
+    top: 273px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #000000;
+}
+
+.help_vorobey {
+    max-width: 565px;
+    margin: 0 93px 0 0;
+}
+
+.help_vorobey ul {
+    padding-left: 20px;
+}
+
+.help-p1 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.help-p-z {
+    padding: 24px 0 16px 0;
+}
+
+.help-p2 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    display: flex;
+    align-items: center;
+    padding: 47px 0 0 0;
+}
+
+.help_button {
+    text-align: center;
+}
+
+.help-button-test {
+    padding: 0 0 55px 0;
+}
+
+.help_test_button {
+    margin-top: 30px;
+    width: 319px;
+    height: 64px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+    background: #F03F5A;
+    cursor: pointer;
+    border-radius: 30px;
+    border: 0;
+    color: white;
+}
+
+.help_test_button:hover {
+    background-color: #B45060;
+}
+
+.help_test_button:active {
+    background-color: #F893A3;
+}
+
+.what-content {
+    width: 100%;
+    height: 100%;
+    background-color: #FFFFFF;
+}
+
+.what-content h2 {
+    padding-top: 50px;
+}
+
+.what-info {
+    display: flex;
+    padding: 50px 93px 0 93px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.what-info p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 28px;
+    max-width: 880px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 28px;
+}
+
+.number2 {
+    padding-left: 20px;
+}
+
+.number1 {
+    padding-right: 20px;
+}
+
+.help-button-test2 {
+    padding: 95px 0 90px 0;
+}

@@ -1,7 +1,7 @@
 body {
     align-items: center;
-    width: 100%;
-    max-width: 1366px;
+    width: 100%; 
+    max-width: 1366px; 
     margin: auto;
     font-family: 'Inter', 'Work Sans', "NunitoSans-Light", Arial, Helvetica, sans-serif;
     background: #4F68BB;
@@ -28,6 +28,11 @@ body {
     transform: translate(-50%, -55%);
     /* box-shadow: 0px 0px 25px; */
     background-color: #FEF6F3;
+
+    position: absolute;
+    top:  50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
 }
 
 .Name-logo {
@@ -48,15 +53,15 @@ body {
 }
 
 .Name-logo-img {
-    margin: 42px 0 0 -57px;
+    margin: 41px 0 0 -57px;
 }
 
 .Name-logo-img-info {
-    margin: 34px 0 0 -58px;
+    margin: 35px 0 0 -57px;
 }
 
 .name {
-    margin: 35px 0 60px 70px;
+    margin: 60px 0 60px 70px;
 }
 
 .name p {
@@ -79,7 +84,7 @@ body {
 }
 
 .text-input {
-    margin: 40px 0 0 0;
+    margin: 15px 0 0 0;
     width: 388px;
     height: 48px;
     border: 1px solid #000000;
@@ -89,7 +94,16 @@ body {
 
 .text-input, .text-input::before, .text-input::after {
     box-sizing: border-box;
+  }
+
+.text-input:hover{
+    border:2px solid #4F68BB; /* цвет обводки */
 }
+
+.text-input:active{
+     border:2px solid #000000;
+}
+
 
 .button {
     text-align: center;
@@ -123,7 +137,7 @@ body {
     font-weight: 700;
     font-size: 32px;
     line-height: 40px;
-    margin: 15px 0 35px 0;
+    margin: 55px 0 35px 0;
 }
 
 .info-li {
