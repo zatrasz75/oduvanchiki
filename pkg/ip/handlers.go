@@ -56,6 +56,7 @@ type FormData struct {
 	Questionid string
 	Answer     string
 	TestStart  string
+	fixUpdate  int
 }
 
 type Browser struct {
@@ -154,8 +155,6 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	}
 	if strName == "" {
 		display.Available = false
-
-		inflog.Print("В место имени введены пробелы.")
 	}
 
 	data := ViewData{
@@ -295,9 +294,10 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
 
-	fmt.Printf("длина нужного массива %v\n", len(resR)) // ======================================================
+	fmt.Printf("длина нужного массива %v\n", len(resR))
 
 	var strId int
+
 	if len(point) <= 59 {
 		var err error
 		// Рандомно выбираем первичный ключ
@@ -306,6 +306,13 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
+
+		//if form.Answer == "" {
+		//	form.fixUpdate = strId
+		//	strId = 1
+		//	fmt.Println(strId, form.fixUpdate)
+		//	fmt.Println("Баг с обновлением !") //=============================================
+		//}
 
 		// Извлечение объекта с помощью первичного ключа
 		s.Db.First(&question, strId)
