@@ -1,11 +1,11 @@
 body {
     scroll-behavior: smooth;
     align-items: center;
-    width: 100%;
-    max-width: 1366px;
+    width: 100%; 
+    max-width: 1366px; 
     margin: auto;
     font-family: 'Inter', 'Work Sans', "NunitoSans-Light", Arial, Helvetica, sans-serif;
-}
+}    
 
 .section {
     margin: 0 auto;
@@ -49,7 +49,7 @@ body {
 }
 
 .HOME {
-    padding: 64px 92px 108px 93px;
+    padding: 0 92px 108px 93px;
     background-color: #FEF6F3;
 }
 .section-home {
@@ -204,45 +204,45 @@ img.rot {
     animation: 1s linear 0s normal none infinite running rot;
     -webkit-animation: 4s linear 0s normal none infinite running rot;
     /* width: 100px; */
-}
-@keyframes rot {
+  }
+  @keyframes rot {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
-@-webkit-keyframes rot {
+  }
+  @-webkit-keyframes rot {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
+  }
 
-img.rot1 {
+  img.rot1 {
     animation: 1s linear 0s normal none infinite running rot1;
     -webkit-animation: 4s linear 0s normal none infinite running rot1;
     /* width: 100px; */
-}
-@keyframes rot1 {
+  }
+  @keyframes rot1 {
     0% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
     100% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
-}
-@-webkit-keyframes rot1 {
+  }
+  @-webkit-keyframes rot1 {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
+  }
 
 
 .content-ADVAN_TEST {
@@ -252,13 +252,13 @@ img.rot1 {
 }
 
 .test-info {
-    width: 300px;
+   width: 300px;
 }
 
 
 
 .title_3 {
-    margin-top: 36px;
+    /* margin-top: 36px; */
     display: block;
     text-transform: none;
     font-family: 'Work Sans';
