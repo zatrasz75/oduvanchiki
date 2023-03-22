@@ -143,6 +143,7 @@ func main() {
 	router.HandleFunc("/next_test", s.NextTest).Methods("POST")
 	router.HandleFunc("/test", s.FormTest).Methods("POST")
 	router.HandleFunc("/info-customer", ip.Customer).Methods("GET")
+	router.HandleFunc("/connection", ip.Connect).Methods("POST")
 
 	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
 

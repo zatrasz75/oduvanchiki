@@ -354,6 +354,30 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Connect Обработчик главной страницы.
+func Connect(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/connection" {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
+	ts, err := template.ParseFiles("./templates/connection.html")
+	if err != nil {
+		errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
+		http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
+		return
+	}
+	// Затем мы используем метод Execute() для записи содержимого
+	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
+	// возможность отправки динамических данных в шаблон.
+	err = ts.Execute(w, nil)
+	if err != nil {
+		errlog.Printf("Внутренняя ошибка сервера. %s", err)
+		http.Error(w, "Внутренняя ошибка сервера", 500)
+	}
+}
+
 // Customer Обработчик отображение страницы о клиенте.
 func Customer(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/info-customer" {
