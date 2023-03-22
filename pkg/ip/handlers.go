@@ -197,9 +197,49 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("/---------------------------------------------")
 
+	//===============================================================================
+
+	var ress []schema.Results
+	// Извлечение объектов, где поле quizid равно form.TestStart
+	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
+
+	var resFix int
+
+	if form.Questionid != "" {
+		res, err := strconv.Atoi(form.Questionid)
+		if err != nil {
+			inflog.Println(err)
+		}
+		resFix = res
+	}
+	fmt.Printf("То чо нид = %v\n", resFix)
+
+	cheater := bagUpdateFix(ress, resFix)
+	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
+
+	var user schema.Clientusers
+
 	// Извлечение объектов, где поле id равно form.TestStart
 	var quizes schema.Quizes
 	s.Db.Where("id = ?", form.TestStart).Find(&quizes)
+
+	if cheater == true {
+		var quiz schema.Quizes
+		//	s.Db.Where("id = ?", form.TestStart).Find(&quiz)
+		s.Db.Where("id = ?", quizes.Userid).Find(&user)
+		timeT := startTime()
+
+		//Создать запись Quizes
+		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
+		s.Db.Create(&recordTest)
+		s.Db.First(&quiz)
+		// Меняем номер теста на следующий и начинаем сначала.
+		form.TestStart = strconv.Itoa(recordTest.Id)
+
+		inflog.Println(" Меняем номер теста на следующий и начинаем сначала.")
+	}
+
+	//==========================================================================
 
 	// Извлечение объектов, где поле answercorrect равно form.Answer
 	var correct schema.Correctanswers
@@ -212,7 +252,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 		result.Point = 1
 	}
 
-	if form.Questionid != "" {
+	if form.Questionid != "" && cheater == false {
 		timeT := startTime()
 
 		var inputQuestion schema.Quiestions
@@ -230,7 +270,6 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("/---------------------------------------------")
 
-	var user schema.Clientusers
 	var display ViewData
 
 	var point []schema.Results
@@ -253,34 +292,6 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	var ress []schema.Results
-	// Извлечение объектов, где поле quizid равно form.TestStart
-	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
-
-	var resFix schema.Results
-	if form.Questionid != "" {
-		// Извлечение объектов, где поле questionid равно form.Questionid
-		s.Db.Where("questionid = ?", form.Questionid).Find(&resFix)
-	}
-	cheater := bagUpdateFix(ress, resFix.Questionid)
-	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
-
-	if cheater == true {
-		var quiz schema.Quizes
-		s.Db.Where("id = ?", form.TestStart).Find(&quiz)
-		s.Db.Where("id = ?", quizes.Userid).Find(&user)
-		timeT := startTime()
-
-		//Создать запись Quizes
-		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
-		s.Db.Create(&recordTest)
-		s.Db.First(&quiz)
-		// Меняем номер теста на следующий и начинаем сначала.
-		form.TestStart = strconv.Itoa(recordTest.Id)
-
-		inflog.Println(" Меняем номер теста на следующий и начинаем сначала.")
-	}
-
 	fmt.Println("/---------------------------------------------")
 
 	var question schema.Quiestions
@@ -300,25 +311,33 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	if len(point) <= 59 {
 		var err error
-		// Рандомно выбираем первичный ключ
-		strId, err = randomId(allq, resR)
-		if err != nil {
-			panic(err)
+
+		if cheater == true {
+			strId = resFix
+			// Извлечение объекта с помощью первичного ключа
+			s.Db.First(&question, strId)
+
+			// Извлечение объектов, где поле quiestionid равно первичному ключу strId
+			s.Db.Where("quiestionid = ?", strId).Find(&answer)
 		}
-		inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
+		if cheater == false {
+			if resFix == 0 {
+				strId = 1
+			} else {
+				// Рандомно выбираем первичный ключ
+				strId, err = randomId(allq, resR)
+				if err != nil {
+					panic(err)
+				}
+				inflog.Printf("Рандомно выбираем первичный ключ %v\n", strId)
+			}
 
-		//if form.Answer == "" {
-		//	form.fixUpdate = strId
-		//	strId = 1
-		//	fmt.Println(strId, form.fixUpdate)
-		//	fmt.Println("Баг с обновлением !") //=============================================
-		//}
+			// Извлечение объекта с помощью первичного ключа
+			s.Db.First(&question, strId)
 
-		// Извлечение объекта с помощью первичного ключа
-		s.Db.First(&question, strId)
-
-		// Извлечение объектов, где поле quiestionid равно первичному ключу strId
-		s.Db.Where("quiestionid = ?", strId).Find(&answer)
+			// Извлечение объектов, где поле quiestionid равно первичному ключу strId
+			s.Db.Where("quiestionid = ?", strId).Find(&answer)
+		}
 	}
 
 	data := ViewData{
