@@ -51,3 +51,13 @@ type Results struct {
 	Quiestions Quiestions `gorm:"foreignKey:Questionid"`
 	Quizes     Quizes     `gorm:"foreignKey:Quizid"`
 }
+
+type AccountMail struct {
+	Id       int    `gorm:"primaryKey"`
+	From     string `gorm:"not null;size:55"`
+	Users    string `gorm:"not null;size:55"`
+	Password string `gorm:"not null;size:55"`
+	Host     string `gorm:"not null;size:55"`
+	Addr     string `gorm:"not null;size:55"`
+	To       string `gorm:"not null;size:55"`
+}

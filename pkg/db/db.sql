@@ -3,6 +3,18 @@ DROP TABLE IF EXISTS results, quizes, clientusers, correctanswers, answers, quie
 
 BEGIN;
 
+CREATE TABLE IF NOT EXISTS public.account_mails
+(
+    id bigint NOT NULL,
+    "from" character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    users character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    host character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    addr character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    "to" character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT account_mails_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS public.answers
 (
     id bigint NOT NULL,

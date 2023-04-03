@@ -69,14 +69,6 @@ type Mail struct {
 	Conclusion string
 }
 
-const (
-	from     = "Vorobeyenglish@ya.ru"
-	users    = "Vorobeyenglish@ya.ru"
-	password = "4ff-k9S-47A-5yY"
-	host     = "smtp.yandex.ru"
-	addr     = "smtp.yandex.ru:25"
-)
-
 type Browser struct {
 	Brows string
 }
@@ -388,27 +380,30 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 }
 
 // Connect Обработчик главной страницы.
-func Connect(w http.ResponseWriter, r *http.Request) {
+func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/connection" {
 		http.NotFound(w, r)
 		return
 	}
+
+	var account schema.AccountMail
+	s.Db.First(&account)
 
 	e := Mail{
 		Name:  r.FormValue("name"),
 		Emale: r.FormValue("email"),
 		Bode:  r.FormValue("text"),
 		To: []string{
-			"Vorobeyenglish@ya.ru",
+			account.To,
 		},
 	}
 
 	if e.Name != "" && e.Emale != "" && e.Bode != "" {
 		msg := []byte("To " + e.Emale + "\r\n" + e.Name + "\r\n" + e.Bode + "\r\n")
 
-		auth := smtp.PlainAuth("", users, password, host)
+		auth := smtp.PlainAuth("", account.Users, account.Password, account.Host)
 
-		err := smtp.SendMail(addr, auth, from, e.To, msg)
+		err := smtp.SendMail(account.Addr, auth, account.From, e.To, msg)
 		if err != nil {
 
 			e := Mail{
