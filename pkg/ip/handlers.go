@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"net/smtp"
 	schema "oduvanchiki/pkg/db"
 	"os"
 	"strconv"
@@ -58,6 +59,23 @@ type FormData struct {
 	TestStart  string
 	fixUpdate  int
 }
+
+type Mail struct {
+	Name       string
+	To         []string
+	Emale      string
+	Bode       string
+	Send       bool
+	Conclusion string
+}
+
+const (
+	from     = "Vorobeyenglish@ya.ru"
+	users    = "Vorobeyenglish@ya.ru"
+	password = "4ff-k9S-47A-5yY"
+	host     = "smtp.yandex.ru"
+	addr     = "smtp.yandex.ru:25"
+)
 
 type Browser struct {
 	Brows string
@@ -119,6 +137,8 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 
 		// userAgents Получает информацию о пользователе
 		userAgents := r.Header.Get("User-Agent")
+
+		fmt.Println(useragent.UserAgent{Name: userAgents})
 
 		// Получить браузер пользователя
 		brows := agentBrowser(userAgents)
@@ -197,8 +217,6 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("/---------------------------------------------")
 
-	//===============================================================================
-
 	var ress []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
@@ -212,7 +230,6 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 		}
 		resFix = res
 	}
-	fmt.Printf("То чо нид = %v\n", resFix)
 
 	cheater := bagUpdateFix(ress, resFix)
 	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
@@ -224,22 +241,19 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	s.Db.Where("id = ?", form.TestStart).Find(&quizes)
 
 	if cheater == true {
-		var quiz schema.Quizes
-		//	s.Db.Where("id = ?", form.TestStart).Find(&quiz)
+
 		s.Db.Where("id = ?", quizes.Userid).Find(&user)
 		timeT := startTime()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
 		s.Db.Create(&recordTest)
-		s.Db.First(&quiz)
+
 		// Меняем номер теста на следующий и начинаем сначала.
 		form.TestStart = strconv.Itoa(recordTest.Id)
 
 		inflog.Println(" Меняем номер теста на следующий и начинаем сначала.")
 	}
-
-	//==========================================================================
 
 	// Извлечение объектов, где поле answercorrect равно form.Answer
 	var correct schema.Correctanswers
@@ -380,6 +394,58 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	e := Mail{
+		Name:  r.FormValue("name"),
+		Emale: r.FormValue("email"),
+		Bode:  r.FormValue("text"),
+		To: []string{
+			"Vorobeyenglish@ya.ru",
+		},
+	}
+
+	if e.Name != "" && e.Emale != "" && e.Bode != "" {
+		msg := []byte("To " + e.Emale + "\r\n" + e.Name + "\r\n" + e.Bode + "\r\n")
+
+		auth := smtp.PlainAuth("", users, password, host)
+
+		err := smtp.SendMail(addr, auth, from, e.To, msg)
+		if err != nil {
+
+			e := Mail{
+				Send:       false,
+				Conclusion: "Внутренняя ошибка сервера, не удалось отправить письмо.",
+			}
+
+			ts, err := template.ParseFiles("./templates/connection.html")
+			if err != nil {
+				errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
+				http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
+				return
+			}
+
+			err = ts.Execute(w, e)
+			if err != nil {
+				errlog.Printf("Внутренняя ошибка сервера. %s", err)
+				http.Error(w, "Внутренняя ошибка сервера, не удалось отправить письмо.", 500)
+			}
+
+			errlog.Printf("Внутренняя ошибка сервера, не удалось отправить письмо. %v\n", err)
+
+			return
+
+		} else {
+			e.Send = true
+			e.Conclusion = "Электронное письмо отправлено успешно."
+
+			inflog.Println("Электронное письмо отправлено успешно.")
+		}
+	}
+
+	data := Mail{
+		Send:       e.Send,
+		Conclusion: e.Conclusion,
+	}
+
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
 	ts, err := template.ParseFiles("./templates/connection.html")
 	if err != nil {
@@ -390,7 +456,7 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, nil)
+	err = ts.Execute(w, data)
 	if err != nil {
 		errlog.Printf("Внутренняя ошибка сервера. %s", err)
 		http.Error(w, "Внутренняя ошибка сервера", 500)
@@ -430,7 +496,7 @@ func bagUpdateFix(ress []schema.Results, resFix int) bool {
 		sl = append(sl, v.Questionid)
 	}
 
-	for i := 0; i < len(sl)-1; i++ {
+	for i := 0; i < len(sl); i++ {
 		if sl[i] == resFix {
 			fix = true
 		}
@@ -536,11 +602,11 @@ func agentBrowser(ua string) string {
 	switch true {
 	case strings.Contains(b.FullVersion(), "111.0.0.0"):
 		br = useragent.Chrome
-	case strings.Contains(b.FullVersion(), "108.0.0.0"):
+	case strings.Contains(b.FullVersion(), "110.0.0.0"):
 		br = "Yandex"
 	case strings.Contains(b.FullVersion(), "95.0.0.0"):
 		br = useragent.Opera
-	case strings.Contains(b.FullVersion(), "110.0.0.0"):
+	case strings.Contains(b.FullVersion(), "111.0.1661.62"):
 		br = useragent.Edge
 	case strings.Contains(b.FullVersion(), "110.0"):
 		br = useragent.Firefox
