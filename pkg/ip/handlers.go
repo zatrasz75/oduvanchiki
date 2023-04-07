@@ -379,7 +379,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Connect Обработчик главной страницы.
+// Connect Обработчик страницы с контактами.
 func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/connection" {
 		http.NotFound(w, r)
