@@ -69,10 +69,6 @@ type Mail struct {
 	Conclusion string
 }
 
-type Browser struct {
-	Brows string
-}
-
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
@@ -130,8 +126,6 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 		// userAgents Получает информацию о пользователе
 		userAgents := r.Header.Get("User-Agent")
 
-		fmt.Println(useragent.UserAgent{Name: userAgents})
-
 		// Получить браузер пользователя
 		brows := agentBrowser(userAgents)
 
@@ -151,7 +145,7 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
 		}
 
-		timeT := startTime()
+		timeT := time.Now()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: recordName.Id, Started: timeT}
@@ -211,7 +205,9 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	var ress []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
-	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
+	if form.TestStart != "" {
+		s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
+	}
 
 	var resFix int
 
@@ -230,12 +226,14 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	// Извлечение объектов, где поле id равно form.TestStart
 	var quizes schema.Quizes
-	s.Db.Where("id = ?", form.TestStart).Find(&quizes)
+	if form.TestStart != "" {
+		s.Db.Where("id = ?", form.TestStart).Find(&quizes)
+	}
 
 	if cheater == true {
 
 		s.Db.Where("id = ?", quizes.Userid).Find(&user)
-		timeT := startTime()
+		timeT := time.Now()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
@@ -259,7 +257,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if form.Questionid != "" && cheater == false {
-		timeT := startTime()
+		timeT := time.Now()
 
 		var inputQuestion schema.Quiestions
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
@@ -279,7 +277,9 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	var display ViewData
 
 	var point []schema.Results
-	s.Db.Where("quizid = ?", form.TestStart).Find(&point)
+	if form.TestStart != "" {
+		s.Db.Where("quizid = ?", form.TestStart).Find(&point)
+	}
 
 	if len(point) == 60 {
 		display.Available = true
@@ -309,7 +309,9 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	var resR []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
-	s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
+	if form.TestStart != "" {
+		s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
+	}
 
 	fmt.Printf("длина нужного массива %v\n", len(resR))
 
@@ -577,31 +579,20 @@ func randomId(allq []schema.Quiestions, resR []schema.Results) (int, error) {
 	return diff[0], nil
 }
 
-// Выводит время +Unix
-func startTime() time.Time {
-
-	tNow := time.Now()
-	//Время для Unix Timestamp
-	tUnix := tNow.Unix()
-	//Временная метка Unix для time.Time
-	time.Unix(tUnix, 0)
-
-	return time.Now()
-}
-
 // Определяет браузер пользователя
 func agentBrowser(ua string) string {
 	var br string
 
 	b := browser.Parse(ua)
+	fmt.Println(b.Version(), b.FullVersion(), b.ID(), b.Name())
 	switch true {
-	case strings.Contains(b.FullVersion(), "111.0.0.0"):
+	case strings.Contains(b.FullVersion(), "112.0.0.0"):
 		br = useragent.Chrome
 	case strings.Contains(b.FullVersion(), "110.0.0.0"):
 		br = "Yandex"
 	case strings.Contains(b.FullVersion(), "95.0.0.0"):
 		br = useragent.Opera
-	case strings.Contains(b.FullVersion(), "111.0.1661.62"):
+	case strings.Contains(b.Version(), "112.0.1722.48"):
 		br = useragent.Edge
 	case strings.Contains(b.FullVersion(), "110.0"):
 		br = useragent.Firefox
