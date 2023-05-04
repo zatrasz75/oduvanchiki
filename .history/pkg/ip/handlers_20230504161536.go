@@ -2,6 +2,7 @@ package ip
 
 import (
 	"fmt"
+	"gorm.io/driver/postgres"
 	"html/template"
 	"log"
 	"math/rand"
@@ -12,8 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"gorm.io/driver/postgres"
 
 	"github.com/mileusna/useragent"
 	"github.com/pattfy/useragent/browser"
@@ -282,7 +281,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []schema.Results
 	s.Db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 3 {
+	if len(point) == 60 {
 		display.Available = true
 
 		point := testresult(point)
