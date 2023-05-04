@@ -6,22 +6,22 @@
     <meta name="viewport" content="width=\, initial-scale=1.0">
     <link href="../static/css/name.css" rel="stylesheet" type="text/css">
     <link href="../static/css/fonts.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/mob.css" media="screen and (max-width: 360px)" rel="stylesheet" type="text/css">
+    <link href="../static/css/mob.css" rel="stylesheet" type="text/css">
     <link rel="icon" sizes="16x16" href="../static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
     <title>Vorobeyenglish</title>
 </head>
 <body>
 
-<!-- {{if .Available}} -->
+<!-- {{if .Available}}
 
     <form class="NAME_LOGO_INFO" action="./test" method="post">
         <div class="Name-logo">
-            <a href="../"><img class="logo_mob" src="../static/img/Иконка _Лого_ (1).svg"></a>
-            <img class="Name-logo-img1-info" src="../static/img/Ellipse 6 (2).svg">
+            <a href="../"><img src="../static/img/Иконка _Лого_ (1).svg"></a>
+            <img class="Name-logo-img1-info" src="./static/img/Ellipse 6 (2).svg">
             <a href="../"><img class="Name-logo-img-info" src="../static/img/Vector (5).svg"></a>
         </div>
         <div class="info">
-            <p>Добро пожаловать!<br>Вы собираетесь<br class="br-mob1"> начать тест</p>
+            <p>Добро пожаловать!<br>Вы собираетесь начать тест</p>
 
             <input type="hidden" name="name" value="{{.User}}">
             <input type="hidden" name="id" value="{{.TestStart}}">
@@ -33,30 +33,29 @@
             </ul>
         </div>
         <div class="button">
-            <button class="button submit_button">Начать тест</button>         
+            <button class="button submit_button">Продолжить</button>         
         </div>
     </form>
 
-<!-- {{else}} -->
+{{else}} -->
 
-<!-- <form class="NAME_LOGO" action="../next_test" method="post">
+<form class="NAME_LOGO" action="./next_test" method="post">
     <div class="Name-logo">
-        <a href="../"><img class="logo_mob" src="../static/img/Иконка _Лого_ (1).svg"></a>
-        <img class="Name-logo-img1" src="../static/img/Ellipse 6 (2).svg">
-        <a href="../"><img class="Name-logo-img" src="../static/img/Vector (5).svg"></a>
+        <a href="../"><img src="./static/img/Иконка _Лого_ (1).svg"></a>
+        <img class="Name-logo-img1" src="./static/img/Ellipse 6 (2).svg">
+        <a href="../"><img class="Name-logo-img" src="./static/img/Vector (5).svg"></a>
     </div>
     <div class="name">
-        <label class="label">Введите своё имя, чтобы мы знали как к<br class="br-mob"> Вам обращаться
-    </div>
-    <div class="name-input">
-        <input required="" name="name" class="text-input" type="text" maxlength="255" minlength="2" placeholder="Ваше имя" pattern="^[А-Яа-яЁё\s a-zA-Z]+$" title="Введите русские или латинские символы. Не менее 2 символов"></label>
+        <label class="label">Введите своё имя, чтобы мы знали как к<br> Вам обращаться
+            <input required="" name="name" class="text-input" type="text" maxlength="255" minlength="2" placeholder="Ваше имя" pattern="^[А-Яа-яЁё\s a-zA-Z]+$" title="Введите русские или латинские символы. Не менее 2 символов"></label>
+        <!-- <p>0 из 255 символов (минимум 2)</p> -->
     </div>
     <div class="button">
         <button class="button submit_button">Продолжить</button>
     </div>
-</form> -->
+</form>
 
-<!-- {{end}} -->
+{{end}}
 
 </body>
 </html>
