@@ -470,8 +470,7 @@ img.rot {
 
 .dropdown,
 .content_img_mob,
-.container_mob,
-.mob-1 {
+.container_mob {
     display: none;
 }
 
@@ -507,9 +506,7 @@ img.rot {
     .content_img,
     .header-nav,
     .container_lev,
-    .text_test img,
-    .footer-logo-p,
-    .footer-logo-p2{
+    .text_test img{
         display: none;
     }
 
@@ -671,7 +668,6 @@ img.rot {
         max-width: 328px;
         max-height: 218px;
         padding: 85px 0 65px 0;
-        margin: 0 0 0 -15px;
     }
 
     .WHY-TEST {
@@ -763,12 +759,15 @@ img.rot {
         height: 7px;
         margin: 0 -16px 55px 0;
     }
-
-    .container_mob{
-        height: 443px;
-    }
     .ball-2 {
         margin: 0;
+    }
+
+    .title_3 {
+        font-size: 26px;
+        line-height: 32px;
+        padding: 58px 18px 0 18px;
+
     }
 
     /* Анимация слайдов */
@@ -817,94 +816,8 @@ img.rot {
     }
 
     .cloud{
-        margin: -11px 0 0 -100px;
+        margin: -11px 0 0 -107px;
     }
 
-    .ball{
-        width: 40px;
-        height: 59px;
-        margin-left: 123px;
-        margin-top: 66px;
-    }
 
-    .container-box-p2 {
-        text-align: left;
-        width: 230px;
-        margin: 0 0 0 35px;
-
-    }
-
-    .ball-2{
-        width: 83px;
-        height: 90px;
-        position: absolute;
-        margin: -59px 0px 0 51px;
-    }
-
-    .ball-3{
-        width: 49px;
-        height: 72px;
-        position: absolute;
-        margin: -58px 0px 0 0px;    
-    }
-
-    .button111{
-        /* z-index: 2;
-        position: absolute; */
-        display: flex;
-        justify-content: space-between;
-        margin: -204px -16px 0 -17px;
-    }
-
-    .test-now-text {
-        padding: 0 0 0 0;
-        margin: 0;
-    }
-
-    .TEST{
-        height: 546px;
-    }
-
-    .title_3 {
-        font-size: 26px;
-        line-height: 32px;
-        padding: 58px 18px 0 18px;
-    }
-
-    .test_button {
-        margin-top: 56px;
-        width: 207px;
-        height: 56px;
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 700;
-        font-size: 18px;
-        line-height: 24px;
-    }
-
-    .FOOTER {
-        height: 450px;
-    }
-
-    .test-now-img{
-        margin: 62px 0 0 -12px;
-    }
-
-    .section-footer {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .footer-logo {
-        margin: -20px 0 0 0;
-    }
-
-    .footer-navi {
-        margin-top: -70px;
-        text-align: center;
-    }
-
-    .mob-1{
-        display: unset;
-    }
 }

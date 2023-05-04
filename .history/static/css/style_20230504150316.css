@@ -671,7 +671,6 @@ img.rot {
         max-width: 328px;
         max-height: 218px;
         padding: 85px 0 65px 0;
-        margin: 0 0 0 -15px;
     }
 
     .WHY-TEST {
@@ -883,7 +882,7 @@ img.rot {
     }
 
     .FOOTER {
-        height: 450px;
+        height: 100%;
     }
 
     .test-now-img{
