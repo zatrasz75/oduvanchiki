@@ -50,10 +50,17 @@ func main() {
 		return
 	}
 
+	// Удалить таблицы, если они существуют
 	err = s.Db.Migrator().DropTable(&schema.Quiestions{}, &schema.Answers{}, &schema.Correctanswers{})
 	if err != nil {
 		errlog.Printf("Не удалось удалить таблицы %v", err)
 	}
+
+	//err = s.Db.Migrator().DropTable(&schema.AccountMail{}) //==========================================
+	//if err != nil {
+	//	errlog.Printf("Не удалось удалить таблицы", err)
+	//	return
+	//}
 
 	// Перенос схемы в таблицу
 	err = s.Db.AutoMigrate(&schema.Quiestions{}, &schema.Correctanswers{}, &schema.Answers{})
@@ -120,6 +127,9 @@ func main() {
 		errlog.Printf("Не удалось перенести схему %v", err)
 	}
 
+	// Перенос схемы в таблицу
+	err = s.Db.AutoMigrate(&schema.AccountMail{})
+
 	//---------------------------------------------------------
 
 	PORT := ":4000"
@@ -143,7 +153,7 @@ func main() {
 	router.HandleFunc("/next_test", s.NextTest).Methods("POST")
 	router.HandleFunc("/test", s.FormTest).Methods("POST")
 	router.HandleFunc("/info-customer", ip.Customer).Methods("GET")
-	router.HandleFunc("/connection", ip.Connect).Methods("POST")
+	router.HandleFunc("/connection", s.Connect).Methods("POST")
 
 	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
 
