@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <link href="../static/css/connection.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/fonts.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/mob.css" media="screen and (max-width: 760px)" rel="stylesheet" type="text/css">
+    <link rel="icon" sizes="16x16" href="../static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    </style>
+    <title>Vorobeyenglish</title>
+</head>
+<body>
+
+{{if .Send}}
+
+    <form class="CONNECTION" action="./" method="get">
+        <div class="Name-logo-conn">
+            <a href="../"><img src="../static/img/Иконка _Лого_ (1).svg"></a>
+            <img class="Name-logo-img1-conn" src="../static/img/Ellipse 6 (2).svg">
+            <a href="../info-customer"><img class="Name-logo-img-conn" src="../static/img/Vector (5).svg"></a>
+        </div>
+        <div class="info-conn">
+            <div class="name">
+                <label class="label">{{.Conclusion}}</label>
+            </div>
+        </div>
+        <div class="button-conn">
+            <button class="submit_button-conn">Закрыть .</button>
+        </div>
+    </form>
+
+{{else}}
+
+    <form class="CONNECTION" action="../connection" method="post">
+        <div class="Name-logo-conn">
+            <a href="../"><img class="Name-logo-conn-img" src="../static/img/Иконка _Лого_ (1).svg"></a>
+            <img class="Name-logo-img1-conn" src="../static/img/Ellipse 6 (2).svg">
+            <a href="../info-customer"><img class="Name-logo-img-conn" src="../static/img/Vector (5).svg"></a>
+        </div>
+        <div class="info-conn">
+            <div class="name">
+                <label class="label">Для связи с Анастасией, заполните, пожалуйста форму
+                <input class="text-input-conn input-conn1" type="text" maxlength="255" minlength="2" placeholder="Ваше имя" required	pattern="[A-Za-zА-Яа-яЁё]{2,}" title="Введите русские или латинские символы. Не менее 2 символов" name="name"></label>
+                <input class="text-input-conn input-conn2" type="email" minlength="2" placeholder="Email" required	pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" title="" name="email"></label>
+                <input class="text-input-conn1 input-conn3" type="text" maxlength="555" minlength="2" placeholder="Вопросы/комментарии " required	 title="Введите русские или латинские символы. Не менее 2 символов" name="text"></label>
+<!-- {{/*                pattern="[A-Za-zА-Яа-яЁё\s.,\()\-]{2,}"*/}} -->
+            </div>
+{{/*            <label class="custom-checkbox">*/}}
+{{/*                <input type="checkbox" value="value-1">*/}}
+{{/*                <span>Я даю согласие на &nbsp;<a href="#"> обработку персональных данных</a></span>*/}}
+{{/*              </label>*/}}
+            <label class="custom-checkbox">
+               <p style="color: #e51515">{{.Conclusion}}</p>
+            </label>
+        </div>    
+        <div class="button-conn">
+                <button class="submit_button-conn">Отправить</button>
+        </div>
+    </form>
+
+{{end}}
+
+    <script src="../static/js/browser.js"></script>
+</body>
+</html>
