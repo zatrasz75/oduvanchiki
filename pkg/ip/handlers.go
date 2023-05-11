@@ -69,6 +69,10 @@ type Mail struct {
 	Conclusion string
 }
 
+type Browser struct {
+	Brows string
+}
+
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
@@ -145,7 +149,7 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
 		}
 
-		timeT := time.Now()
+		timeT := startTime()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: recordName.Id, Started: timeT}
@@ -205,9 +209,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	var ress []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
-	if form.TestStart != "" {
-		s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
-	}
+	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
 
 	var resFix int
 
@@ -226,14 +228,12 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	// Извлечение объектов, где поле id равно form.TestStart
 	var quizes schema.Quizes
-	if form.TestStart != "" {
-		s.Db.Where("id = ?", form.TestStart).Find(&quizes)
-	}
+	s.Db.Where("id = ?", form.TestStart).Find(&quizes)
 
 	if cheater == true {
 
 		s.Db.Where("id = ?", quizes.Userid).Find(&user)
-		timeT := time.Now()
+		timeT := startTime()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
@@ -257,7 +257,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if form.Questionid != "" && cheater == false {
-		timeT := time.Now()
+		timeT := startTime()
 
 		var inputQuestion schema.Quiestions
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
@@ -277,9 +277,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	var display ViewData
 
 	var point []schema.Results
-	if form.TestStart != "" {
-		s.Db.Where("quizid = ?", form.TestStart).Find(&point)
-	}
+	s.Db.Where("quizid = ?", form.TestStart).Find(&point)
 
 	if len(point) == 60 {
 		display.Available = true
@@ -309,9 +307,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	var resR []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
-	if form.TestStart != "" {
-		s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
-	}
+	s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
 
 	fmt.Printf("длина нужного массива %v\n", len(resR))
 
@@ -400,8 +396,11 @@ func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	// Удаляем случайные пробелы вначале и в конце строки имени
+	name := strings.TrimSpace(e.Name)
+
 	if e.Name != "" && e.Emale != "" && e.Bode != "" {
-		msg := []byte("To " + e.Emale + "\r\n" + e.Name + "\r\n" + e.Bode + "\r\n")
+		msg := []byte("To " + e.Emale + "\r\n" + name + "\r\n" + e.Bode + "\r\n")
 
 		auth := smtp.PlainAuth("", account.Users, account.Password, account.Host)
 
@@ -486,20 +485,16 @@ func Customer(w http.ResponseWriter, r *http.Request) {
 
 // Определяет есть такая запись или обновлена страница
 func bagUpdateFix(ress []schema.Results, resFix int) bool {
-	var fix bool
-
 	sl := make([]int, 0, 60)
+
 	for _, v := range ress {
+		if resFix == v.Questionid {
+			return true
+		}
 		sl = append(sl, v.Questionid)
 	}
 
-	for i := 0; i < len(sl); i++ {
-		if sl[i] == resFix {
-			fix = true
-		}
-	}
-
-	return fix
+	return false
 }
 
 // Подсчитывает уровень знаний по количеству ответов
@@ -579,20 +574,31 @@ func randomId(allq []schema.Quiestions, resR []schema.Results) (int, error) {
 	return diff[0], nil
 }
 
+// Выводит время +Unix
+func startTime() time.Time {
+
+	tNow := time.Now()
+	//Время для Unix Timestamp
+	tUnix := tNow.Unix()
+	//Временная метка Unix для time.Time
+	time.Unix(tUnix, 0)
+
+	return time.Now()
+}
+
 // Определяет браузер пользователя
 func agentBrowser(ua string) string {
 	var br string
 
 	b := browser.Parse(ua)
-	fmt.Println(b.Version(), b.FullVersion(), b.ID(), b.Name())
 	switch true {
-	case strings.Contains(b.FullVersion(), "112.0.0.0"):
+	case strings.Contains(b.FullVersion(), "113.0.0.0"):
 		br = useragent.Chrome
 	case strings.Contains(b.FullVersion(), "110.0.0.0"):
 		br = "Yandex"
 	case strings.Contains(b.FullVersion(), "95.0.0.0"):
 		br = useragent.Opera
-	case strings.Contains(b.Version(), "112.0.1722.48"):
+	case strings.Contains(b.FullVersion(), "113.0.0.0"):
 		br = useragent.Edge
 	case strings.Contains(b.FullVersion(), "110.0"):
 		br = useragent.Firefox
