@@ -395,8 +395,7 @@ body {
 }
 
 .vorobey-bloc1,
-.what-content-mob,
-.help-p1-mob {
+.what-content-mob {
     display: block;
 }
 
@@ -410,7 +409,7 @@ body {
     font-variant: small-caps;
 }
 
-.what-content-mob h2 {
+.what-content h2 {
     padding: 45px 0 57px 0;
 }
 

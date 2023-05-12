@@ -476,6 +476,10 @@ img.rot {
     display: none;
 }
 
+ {
+    display: block;
+}
+
 @media screen and (max-width: 360px) {
     * {
         margin: 0;

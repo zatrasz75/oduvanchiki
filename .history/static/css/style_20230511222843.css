@@ -471,12 +471,11 @@ img.rot {
 .dropdown,
 .content_img_mob,
 .container_mob,
-.mob-1,
-.br-mob {
+.mob-1 {
     display: none;
 }
 
-@media screen and (max-width: 360px) {
+@media screen and (max-width: 760px) {
     * {
         margin: 0;
         padding: 0;

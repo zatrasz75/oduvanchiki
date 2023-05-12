@@ -163,8 +163,6 @@
     padding: 95px 0 90px 0;
 }
 
-.what-content-mob,
-.br-mob1,
-.help-p1-mob {
+.what-content-mob {
     display: none;
 }

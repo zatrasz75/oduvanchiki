@@ -395,8 +395,7 @@ body {
 }
 
 .vorobey-bloc1,
-.what-content-mob,
-.help-p1-mob {
+.what-content-mob {
     display: block;
 }
 
@@ -408,10 +407,6 @@ body {
     line-height: 32px;
     text-align: center;
     font-variant: small-caps;
-}
-
-.what-content-mob h2 {
-    padding: 45px 0 57px 0;
 }
 
 .help-p1 {
