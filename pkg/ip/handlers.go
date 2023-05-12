@@ -2,16 +2,18 @@ package ip
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
 	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
+	"net/smtp"
 	schema "oduvanchiki/pkg/db"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"gorm.io/driver/postgres"
 
 	"github.com/mileusna/useragent"
 	"github.com/pattfy/useragent/browser"
@@ -57,6 +59,15 @@ type FormData struct {
 	Answer     string
 	TestStart  string
 	fixUpdate  int
+}
+
+type Mail struct {
+	Name       string
+	To         []string
+	Emale      string
+	Bode       string
+	Send       bool
+	Conclusion string
 }
 
 type Browser struct {
@@ -197,8 +208,6 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("/---------------------------------------------")
 
-	//===============================================================================
-
 	var ress []schema.Results
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	s.Db.Where("quizid = ?", form.TestStart).Find(&ress)
@@ -212,7 +221,6 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 		}
 		resFix = res
 	}
-	fmt.Printf("То чо нид = %v\n", resFix)
 
 	cheater := bagUpdateFix(ress, resFix)
 	inflog.Printf("Обновление страницы с вопросами, ЧИТ %v\n", cheater)
@@ -224,22 +232,19 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	s.Db.Where("id = ?", form.TestStart).Find(&quizes)
 
 	if cheater == true {
-		var quiz schema.Quizes
-		//	s.Db.Where("id = ?", form.TestStart).Find(&quiz)
+
 		s.Db.Where("id = ?", quizes.Userid).Find(&user)
 		timeT := startTime()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
 		s.Db.Create(&recordTest)
-		s.Db.First(&quiz)
+
 		// Меняем номер теста на следующий и начинаем сначала.
 		form.TestStart = strconv.Itoa(recordTest.Id)
 
 		inflog.Println(" Меняем номер теста на следующий и начинаем сначала.")
 	}
-
-	//==========================================================================
 
 	// Извлечение объектов, где поле answercorrect равно form.Answer
 	var correct schema.Correctanswers
@@ -373,11 +378,69 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Connect Обработчик главной страницы.
-func Connect(w http.ResponseWriter, r *http.Request) {
+// Connect Обработчик страницы с контактами.
+func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/connection" {
 		http.NotFound(w, r)
 		return
+	}
+
+	var account schema.AccountMail
+	s.Db.First(&account)
+
+	e := Mail{
+		Name:  r.FormValue("name"),
+		Emale: r.FormValue("email"),
+		Bode:  r.FormValue("text"),
+		To: []string{
+			account.To,
+		},
+	}
+
+	// Удаляем случайные пробелы вначале и в конце строки имени
+	name := strings.TrimSpace(e.Name)
+
+	if e.Name != "" && e.Emale != "" && e.Bode != "" {
+		msg := []byte("To " + e.Emale + "\r\n" + name + "\r\n" + e.Bode + "\r\n")
+
+		auth := smtp.PlainAuth("", account.Users, account.Password, account.Host)
+
+		err := smtp.SendMail(account.Addr, auth, account.From, e.To, msg)
+		if err != nil {
+
+			e := Mail{
+				Send:       false,
+				Conclusion: "Внутренняя ошибка сервера, не удалось отправить письмо.",
+			}
+
+			ts, err := template.ParseFiles("./templates/connection.html")
+			if err != nil {
+				errlog.Printf("Внутренняя ошибка сервера, запрашиваемая страница не найдена. %s", err)
+				http.Error(w, "Внутренняя ошибка сервера, запрашиваемая страница не найдена.", 500)
+				return
+			}
+
+			err = ts.Execute(w, e)
+			if err != nil {
+				errlog.Printf("Внутренняя ошибка сервера. %s", err)
+				http.Error(w, "Внутренняя ошибка сервера, не удалось отправить письмо.", 500)
+			}
+
+			errlog.Printf("Внутренняя ошибка сервера, не удалось отправить письмо. %v\n", err)
+
+			return
+
+		} else {
+			e.Send = true
+			e.Conclusion = "Электронное письмо отправлено успешно."
+
+			inflog.Println("Электронное письмо отправлено успешно.")
+		}
+	}
+
+	data := Mail{
+		Send:       e.Send,
+		Conclusion: e.Conclusion,
 	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
@@ -390,7 +453,7 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 	// Затем мы используем метод Execute() для записи содержимого
 	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
 	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, nil)
+	err = ts.Execute(w, data)
 	if err != nil {
 		errlog.Printf("Внутренняя ошибка сервера. %s", err)
 		http.Error(w, "Внутренняя ошибка сервера", 500)
@@ -423,20 +486,16 @@ func Customer(w http.ResponseWriter, r *http.Request) {
 
 // Определяет есть такая запись или обновлена страница
 func bagUpdateFix(ress []schema.Results, resFix int) bool {
-	var fix bool
-
 	sl := make([]int, 0, 60)
+
 	for _, v := range ress {
+		if resFix == v.Questionid {
+			return true
+		}
 		sl = append(sl, v.Questionid)
 	}
 
-	for i := 0; i < len(sl)-1; i++ {
-		if sl[i] == resFix {
-			fix = true
-		}
-	}
-
-	return fix
+	return false
 }
 
 // Подсчитывает уровень знаний по количеству ответов
@@ -534,13 +593,13 @@ func agentBrowser(ua string) string {
 
 	b := browser.Parse(ua)
 	switch true {
-	case strings.Contains(b.FullVersion(), "111.0.0.0"):
+	case strings.Contains(b.FullVersion(), "113.0.0.0"):
 		br = useragent.Chrome
-	case strings.Contains(b.FullVersion(), "108.0.0.0"):
+	case strings.Contains(b.FullVersion(), "110.0.0.0"):
 		br = "Yandex"
 	case strings.Contains(b.FullVersion(), "95.0.0.0"):
 		br = useragent.Opera
-	case strings.Contains(b.FullVersion(), "110.0.0.0"):
+	case strings.Contains(b.FullVersion(), "113.0.0.0"):
 		br = useragent.Edge
 	case strings.Contains(b.FullVersion(), "110.0"):
 		br = useragent.Firefox

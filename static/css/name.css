@@ -35,6 +35,10 @@ body {
     transform: translate(-50%,-50%);
 }
 
+.br-mob1 {
+    display: none;
+}
+
 .Name-logo {
     display: flex;
 }
@@ -62,6 +66,10 @@ body {
 
 .name {
     margin: 60px 0 60px 70px;
+}
+
+.name-input {
+    margin: -45px 0 60px 70px;
 }
 
 .name p {

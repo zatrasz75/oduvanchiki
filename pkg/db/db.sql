@@ -1,7 +1,19 @@
-DROP TABLE IF EXISTS results, quizes, clientusers, correctanswers, answers, quiestions;
+DROP TABLE IF EXISTS results, quizes, clientusers, correctanswers, answers, quiestions, account_mails;
 
 
 BEGIN;
+
+CREATE TABLE IF NOT EXISTS public.account_mails
+(
+    id bigint NOT NULL,
+    "from" character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    users character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    host character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    addr character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    "to" character varying(55) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT account_mails_pkey PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS public.answers
 (
@@ -100,4 +112,8 @@ ALTER TABLE IF EXISTS public.results
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
+
 END;
+
+INSERT INTO public.account_mails (id, "from", users, password, host, addr, "to")
+VALUES ('1', 'Vorobeyenglish@ya.ru', 'Vorobeyenglish@ya.ru', '4ff-k9S-47A-5yY', 'smtp.yandex.ru', 'smtp.yandex.ru:25', 'Vorobeyenglish@ya.ru');
