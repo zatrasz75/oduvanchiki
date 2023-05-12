@@ -471,7 +471,8 @@ img.rot {
 .dropdown,
 .content_img_mob,
 .container_mob,
-.mob-1 {
+.mob-1,
+.br-mob {
     display: none;
 }
 
