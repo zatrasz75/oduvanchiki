@@ -146,13 +146,8 @@ body {
 }
 
 .set {
-    padding: 3px 0 27px 25px;
+    padding: 3px 0 27px 30px;
     color: #4F68BB;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 35px;
 }
 
 .button-test {
@@ -221,17 +216,6 @@ body {
     width: 210px;
     height: 187px;
 }
-
-.appeal {
-    display: flex;
-    justify-content: space-between;
-    background-size: 100%;
-    background-color: #FDE4D3;
-    padding-top: 75px;
-    padding: 70px 195px 0 195px;
-    /* margin-top: 165px; */
-}
-
 
 .ya-share2__list.ya-share2__list_direction_horizontal > .ya-share2__item {
     display: inline-block;
