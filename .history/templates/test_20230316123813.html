@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/css/style.css" rel="stylesheet" type="text/css">
+    <link href="./static/css/style.css" rel="stylesheet" type="text/css">
     <link href="./static/css/test.css" rel="stylesheet" type="text/css">
     <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/mob.css" media="screen and (max-width: 760px)" rel="stylesheet" type="text/css">
     <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
     <title>Vorobeyenglish</title>
 </head>
 <body>
-<script src="./static/js/listmenu.js"></script>
 <header class="header" di="HOME">
     <div class="section">
         <div class="section-header">
@@ -20,31 +18,9 @@
                 <a href="./"><img src="./static/img/Иконка _Лого_ (1).svg"></a>
             </div>
             <nav>
-                <div class="dropdown">
-                    <!-- <button onclick="myFunction()" class="dropbtn"> Выпадающий</button> -->
-                    <a onclick="myFunction()"><img class="dropbtn" src="./static/img/Vector (6).svg"></a>
-                    <div id="myDropdown" class="dropdown-content">
-                        <div class="Name-logo-test">
-                            <a href="#"><img class="Name-logo-mob2" src="./static/img/Иконка _Лого_ (1).svg"></a>
-                            <img class="Name-logo-img1-info1" src="./static/img/Ellipse 6 (2).svg">
-                            <a href="#"><img class="Name-logo-img-info1 Name-logo-mob3" src="./static/img/Vector (5).svg"></a>
-                        </div>
-                        <div class="header-nav-mob">
-                            <a class="link" href="№">Главная</a>
-                            <a class="link" href="#ADVAN_TEST">Преимущества теста</a>
-                            <a class="link" href="#LANGUAGE_LEVELS">Уровни знания языка</a>
-                            <form class="dropdown-button-mob" action="./next_test" method="post">
-                                <button class="dropdown-button-mob1">Пройти тест</button>
-                            </form>
-                            <a class="link" href="#">О проекте</a>
-                            <a class="link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a>
-                        </div>
-                        </div>
-                </div>
-
                 <ul class="header-nav">
-                    <li><a class="link" href="#ADVAN_TEST">Преимущества теста</a></li>
-                    <li><a class="link" href="#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                    <li><a class="link" href="/">Преимущества теста</a></li>
+                    <li><a class="link" href="/">Уровни знания языка</a></li>
                     <li><a class="link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a></li>
                     <li><a class="link" href="#">О проекте</a></li>
                 </ul>
@@ -74,13 +50,13 @@
             <p class="info-result-p"><span style="font-weight: 600;"> {{.User}}</span>, Вы правильно ответили на {{.Point}} вопросов.
                 Ваш уровень владения английским языком соответствует стандарту <br><span style="font-weight: 600;">{{.Level}}</span> в соответствии
                 с рекомендациями, установленными Общеевропейской системой оценивания (CEFR).</p>
-            <!-- <div class="share">
+            <div class="share">
                 <p>Поделитесь своим результатом</p>
                 <div class="share-img">
                     <script src="https://yastatic.net/share2/share.js"></script>
                     <div class="ya-share2" data-curtain data-shape="round" data-services="vkontakte,odnoklassniki,telegram"></div>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
     <div class="appeal">
@@ -88,23 +64,19 @@
             <p><span style="font-weight: 600;">{{.User}}</span>, если Вы хотите прокачать свой английский на 2-3 уровня, Вы можете обратиться
                 к преподавателю проекта Vorobey English <span style="font-weight: 600;">Анастасии</span>. </p>
             <div class="button-test">
-                <form action="./info-customer" method="get">
                 <button class="button test_button" id="submit">Узнать подробнее</button>
-                </form>
             </div>
             <div class="button-test">
-                <form action="./connection" method="post">
-                <button class="button test_button" id="application">Оставить заявку</button>
-                </form>
+                <button class="button test_button" id="application" href="./info-customer.html">Оставить заявку</button>
             </div>
         </div>
-        <div class="appeal_img">
+        <div>
             <img src="./static/img/Group 82 1 1.svg" alt="">
         </div>
 
     </div>
 </form>
-{{else}}
+    {{else}}
 
     <form class="quiz-box" id="quiz" action="./test" method="post">
         <div class="quiz-header">
@@ -156,12 +128,10 @@
             <div class="footer-navi">
                 <nav>
                     <ul class="footer-nav">
-                        <li><a class="footer-link" href="/#ADVAN_TEST">Преимущества теста</a></li>
-                        <li><a class="footer-link" href="/#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                        <li><a class="footer-link" href="/">Преимущества теста</a></li>
+                        <li><a class="footer-link" href="/">Уровни знания языка</a></li>
                         <li><a class="footer-link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a></li>
                         <li><a class="footer-link" href="#">О проекте</a></li>
-                        <li><p class="mob-1 footer-link">© Vorobey English 2023<br> Все права защищены</p></li>
-                        <li><p class="mob-1 footer-link" >Image by www.freepik.com</p></li>
                     </ul>
                 </nav>
             </div>
