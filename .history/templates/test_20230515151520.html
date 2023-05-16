@@ -4,40 +4,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./static/css/style.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/test.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/mob.css" media="screen and (max-width: 360px)" rel="stylesheet" type="text/css">
-    <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/test.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/fonts.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/mob.css" media="screen and (max-width: 360px)" rel="stylesheet" type="text/css">
+    <link rel="icon" sizes="16x16" href="../static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
     <title>Vorobeyenglish</title>
 </head>
 <body>
-<script src="./static/js/listmenu.js"></script>
+<script src="../static/js/listmenu.js"></script>
 <header class="header" di="HOME">
     <div class="section">
         <div class="section-header">
             <div class="logo">
-                <a href="./"><img src="./static/img/Иконка _Лого_ (1).svg"></a>
+                <a href="../"><img src="../static/img/Иконка _Лого_ (1).svg"></a>
             </div>
             <nav>
                 <div class="dropdown">
                     <!-- <button onclick="myFunction()" class="dropbtn"> Выпадающий</button> -->
-                    <a onclick="myFunction()"><img class="dropbtn" src="./static/img/Vector (6).svg"></a>
+                    <a onclick="myFunction()"><img class="dropbtn" src="../static/img/Vector (6).svg"></a>
                     <div id="myDropdown" class="dropdown-content">
                         <div class="Name-logo-test">
-                            <a href="#"><img class="Name-logo-mob2" src="./static/img/Иконка _Лого_ (1).svg"></a>
-                            <img class="Name-logo-img1-info1" src="./static/img/Ellipse 6 (2).svg">
-                            <a href="#"><img class="Name-logo-img-info1 Name-logo-mob3" src="./static/img/Vector (5).svg"></a>
+                            <a href="#"><img class="Name-logo-mob2" src="../static/img/Иконка _Лого_ (1).svg"></a>
+                            <img class="Name-logo-img1-info1" src="../static/img/Ellipse 6 (2).svg">
+                            <a href="#"><img class="Name-logo-img-info1 Name-logo-mob3" src="../static/img/Vector (5).svg"></a>
                         </div>
                         <div class="header-nav-mob">
-                            <a class="link" href="./">Главная</a>
-                            <a class="link" href="./#ADVAN_TEST">Преимущества теста</a>
-                            <a class="link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a>
-                            <form class="dropdown-button-mob" action="./next_test" method="post">
+                            <a class="link" href="../">Главная</a>
+                            <a class="link" href="../#ADVAN_TEST">Преимущества теста</a>
+                            <a class="link" href="../#LANGUAGE_LEVELS">Уровни знания языка</a>
+                            <form class="dropdown-button-mob" action="../next_test" method="post">
                                 <button class="dropdown-button-mob1">Пройти тест</button>
                             </form>
-                            <!-- <a class="link" href="#">О проекте</a> -->
-                            <a class="link" href="mailto:Vorobeyenglish@ya.ru">Свяжитесь с нами</a>
+                            <a class="link" href="#">О проекте</a>
+                            <a class="link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a>
                         </div>
                         </div>
                 </div>
@@ -45,8 +45,8 @@
                 <ul class="header-nav">
                     <li><a class="link" href="#ADVAN_TEST">Преимущества теста</a></li>
                     <li><a class="link" href="#LANGUAGE_LEVELS">Уровни знания языка</a></li>
-                    <li><a class="link" href="mailto:Vorobeyenglish@ya.ru">Свяжитесь с нами</a></li>
-                    <!-- <li><a class="link" href="#">О проекте</a></li> -->
+                    <li><a class="link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a></li>
+                    <li><a class="link" href="#">О проекте</a></li>
                 </ul>
             </nav>
         </div>
@@ -56,14 +56,14 @@
     <div class="section">
     {{if .Available}}
 
-<form class="result" action="./info-customer">
+<form class="result" action="../info-customer">
     <div class="title-result">
         <p>Ваш Результат</p>
     </div>
     <div class="result1">
         <div class="level-2">
             <div class="level">
-                <img src="./static/img/Ellipse 15.svg" alt="Result">
+                <img src="../static/img/Ellipse 15.svg" alt="Result">
                 <p>{{.Point}}</p>
             </div>
             <div class="lavel-1">
@@ -88,25 +88,25 @@
             <p><span style="font-weight: 600;">{{.User}}</span>, если Вы хотите прокачать свой английский на 2-3 уровня, Вы можете обратиться
                 к преподавателю проекта Vorobey English <span style="font-weight: 600;">Анастасии</span>. </p>
             <div class="button-test">
-                <form action="./info-customer" method="get">
+                <form action="../info-customer" method="get">
                 <button class="button test_button" id="submit">Узнать подробнее</button>
                 </form>
             </div>
             <div class="button-test">
-                <form action="./connection" method="post">
+                <form action="../connection" method="post">
                 <button class="button test_button" id="application">Оставить заявку</button>
                 </form>
             </div>
         </div>
         <div class="appeal_img">
-            <img src="./static/img/Group 82 1 1.svg" alt="">
+            <img src="../static/img/Group 82 1 1.svg" alt="">
         </div>
 
     </div>
 </form>
 {{else}}
 
-   <form class="quiz-box" id="quiz" action="./test" method="post">
+   <!-- <form class="quiz-box" id="quiz" action="../test" method="post">
         <div class="quiz-header">
             <p class="set">{{.NumberTest}}/60</p>
             <h2 id="question">{{.Question}}</h2>
@@ -144,12 +144,12 @@
         </div>
     </form>
     {{end}}
-    </div>
+    </div>-->
 </main>
 <footer class="FOOTER">
     <div class="section-footer">
             <div class="footer-logo">
-                <a href="./"><img src="./static/img/Vector (3).svg"></a>
+                <a href="./"><img src="../static/img/Vector (3).svg"></a>
                 <p class="footer-logo-p">Image by www.freepik.com</p>
                 <p class="footer-logo-p2">© Vorobey English 2023. Все права защищены</p>
                 <p class="footer-logo-p2" >Проект разработан в рамках Pineapple Practice</p>
@@ -157,10 +157,10 @@
             <div class="footer-navi">
                 <nav>
                     <ul class="footer-nav">
-                        <li><a class="footer-link" href="./#ADVAN_TEST">Преимущества теста</a></li>
-                        <li><a class="footer-link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a></li>
-                        <li><a class="footer-link" href="mailto:Vorobeyenglish@ya.ru">Свяжитесь с нами</a></li>
-                        <!-- <li><a class="footer-link" href="#">О проекте</a></li> -->
+                        <li><a class="footer-link" href="../#ADVAN_TEST">Преимущества теста</a></li>
+                        <li><a class="footer-link" href="../#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                        <li><a class="footer-link" href="mailto:englishtest@yandex.ru">Свяжитесь с нами</a></li>
+                        <li><a class="footer-link" href="#">О проекте</a></li>
                         <li><p class="mob-1 footer-link">© Vorobey English 2023<br> Все права защищены</p></li>
                         <li><p class="mob-1 footer-link" >Image by www.freepik.com</p></li>
                         <li><p class="mob-1 footer-link" >Проект разработан в рамках Pineapple Practice</p></li>
