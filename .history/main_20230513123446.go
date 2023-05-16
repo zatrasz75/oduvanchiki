@@ -56,11 +56,11 @@ func main() {
 		errlog.Printf("Не удалось удалить таблицы %v", err)
 	}
 
-	err = s.Db.Migrator().DropTable(&schema.AccountMail{}) //==========================================
-	if err != nil {
-		errlog.Printf("Не удалось удалить таблицы", err)
-		return
-	}
+	//err = s.Db.Migrator().DropTable(&schema.AccountMail{}) //==========================================
+	//if err != nil {
+	//	errlog.Printf("Не удалось удалить таблицы", err)
+	//	return
+	//}
 
 	// Перенос схемы в таблицу
 	err = s.Db.AutoMigrate(&schema.Quiestions{}, &schema.Correctanswers{}, &schema.Answers{})

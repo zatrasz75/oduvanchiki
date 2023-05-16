@@ -21,7 +21,7 @@ const (
 	Host     = "localhost"
 	Port     = 5432
 	Users    = "postgres"
-	Password = "rootroot"
+	Password = "root"
 	Dbname   = "Dandelions"
 )
 

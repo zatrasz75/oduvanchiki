@@ -188,6 +188,9 @@ body {
     padding: 60px 30px 50px 33px;
 }
 
+.share {
+    display: none;
+}
 
 .share p{
     font-family: 'Inter';
@@ -500,7 +503,7 @@ body {
 }
 .section-footer {
     background-color: #4F68BB;
-    /* height: 450px; */
+    height: 450px;
     color: #C9C9C9;
 }
 

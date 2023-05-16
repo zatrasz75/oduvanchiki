@@ -472,8 +472,7 @@ img.rot {
 .content_img_mob,
 .container_mob,
 .mob-1,
-.br-mob,
-.advan-test-p-2-mob {
+.br-mob {
     display: none;
 }
 
@@ -907,9 +906,6 @@ img.rot {
         line-height: 24px;
     }
 
-    .FOOTER {
-        height: 100%;
-    }
 
     .test-now-img{
         margin: 62px 0 0 -12px;
