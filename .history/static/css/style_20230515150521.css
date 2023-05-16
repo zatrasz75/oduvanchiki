@@ -472,8 +472,7 @@ img.rot {
 .content_img_mob,
 .container_mob,
 .mob-1,
-.br-mob,
-.advan-test-p-2-mob {
+.br-mob {
     display: none;
 }
 
@@ -908,7 +907,7 @@ img.rot {
     }
 
     .FOOTER {
-        height: 100%;
+        height: 480px;
     }
 
     .test-now-img{
@@ -918,7 +917,6 @@ img.rot {
     .section-footer {
         display: flex;
         flex-direction: column;
-        height: 518px;
     }
 
     .footer-logo {
