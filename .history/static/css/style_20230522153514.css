@@ -292,7 +292,7 @@ img.rot {
 
 .container {
     display: grid;
-    grid-template-columns: repeat(3, 290px);
+    grid-template-columns: repeat(3, 295px);
     justify-items: stretch;
     justify-content: space-around;;
     grid-template-rows: 100px 100px 100px;
@@ -302,7 +302,7 @@ img.rot {
 
 .text_test {
     /* margin-left: 700px; */
-    text-align: center;
+    text-align: right;
 }
 
 .container-box h3 {
