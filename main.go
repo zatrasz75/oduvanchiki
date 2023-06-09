@@ -34,11 +34,9 @@ var (
 )
 
 func main() {
+	// os.Getenv("DATABASE_URL")
 	// Соединение с БД.
 	s, err := ip.New(conStr)
-	if err != nil {
-		panic("не удалось подключить базу данных")
-	}
 	if err != nil {
 		errlog.Fatal("Нет подключения к БД \n", err.Error())
 	}
