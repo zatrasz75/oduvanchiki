@@ -8,7 +8,7 @@
     <link href="./static/css/style.css" rel="stylesheet" type="text/css">
     <link href="./static/css/test.css" rel="stylesheet" type="text/css">
     <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/mob.css" media="screen and (max-width: 360px)" rel="stylesheet" type="text/css">
+    <link href="./static/css/mob.css" media="screen and (max-width: 414px)" rel="stylesheet" type="text/css">
     <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
     <title>Vorobeyenglish</title>
 </head>
@@ -31,8 +31,8 @@
                     </div>
                     <div class="header-nav-mob">
                         <a class="link" href="">Главная</a>
-                        <a class="link" href="/#ADVAN_TEST">Преимущества теста</a>
-                        <a class="link" href="/#LANGUAGE_LEVELS">Уровни знания языка</a>
+                        <a class="link" href="./#ADVAN_TEST">Преимущества теста</a>
+                        <a class="link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a>
                         <form class="dropdown-button-mob" action="./next_test" method="post">
                             <button class="dropdown-button-mob1">Пройти тест</button>
                         </form>
@@ -182,8 +182,8 @@
             <div class="footer-navi">
                 <nav>
                     <ul class="footer-nav">
-                        <li><a class="footer-link" href="/#ADVAN_TEST">Преимущества теста</a></li>
-                        <li><a class="footer-link" href="/#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                        <li><a class="footer-link" href="./#ADVAN_TEST">Преимущества теста</a></li>
+                        <li><a class="footer-link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a></li>
                         <li><a class="footer-link" href="mailto:Vorobeyenglish@ya.ru">Свяжитесь с нами</a></li>
                         <!-- <li><a class="footer-link" href="#">О проекте</a></li> -->
                         <li><p class="mob-1 footer-link">© Vorobey English 2023<br> Все права защищены</p></li>
@@ -196,7 +196,19 @@
         </div>
     </div>
 </footer>
-
+<section class="scrool">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="arrow-up-short" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
+        </symbol>
+    </svg>
+    <div class="btn-up btn-up_hide">
+        <svg class="btn-up-icon" role="img" aria-label="Прокрутить страницу к началу">
+        <use xlink:href="#arrow-up-short"></use>
+        </svg>
+    </div>
+    <script src="./static/js/btn_up.js"></script>
+</section>
 </body>
 
 </html>

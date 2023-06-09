@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./static/css/name.css" rel="stylesheet" type="text/css">
     <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/mob.css" media="screen and (max-width: 360px)" rel="stylesheet" type="text/css">
-    <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
+    <link href="./static/css/mob.css" media="screen and (max-width: 414px)" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
     <title>Vorobeyenglish</title>
 </head>
 <body>
+    <div class="container">
 
 {{if .Available}}
 
@@ -48,7 +49,6 @@
     <div class="name">
         <label class="label">Введите своё имя, чтобы мы знали как к<br> Вам обращаться
             <input required="" name="name" class="text-input" type="text" maxlength="255" minlength="2" placeholder="Ваше имя" pattern="^[А-Яа-яЁё\s a-zA-Z]+$" title="Введите русские или латинские символы. Не менее 2 символов"></label>
-        <!-- <p>0 из 255 символов (минимум 2)</p> -->
     </div>
     <div class="button">
         <button class="button submit_button">Продолжить</button>
@@ -56,6 +56,6 @@
 </form>
 
 {{end}}
-
+</div>
 </body>
 </html>

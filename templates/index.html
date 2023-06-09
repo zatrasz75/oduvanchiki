@@ -150,7 +150,7 @@
             <div class="content">
                 <div class="text_test">
                     <h1 class="title_3">Уровни знания языка по Европейской системе</h1>
-                    <img src="./static/img/иллюстр 1 1.svg">
+                    <img class='text_test_img' src="./static/img/иллюстр 1 1.svg">
                 </div>
                 <div class="container container_lev">
                     <div class="box-1 container-box">
@@ -256,7 +256,10 @@
                             <div><a class="next" onclick="plusSlide()"><img src="./static/img/Polygon 2.png"></a></div>
                             <script src="./static/js/slider.js"></script>
                         </div>
-                    <div>
+                       <div>
+                      </div>
+                      </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -308,8 +311,20 @@
             </div>
 
         </div>
-    </div>
+     </div>
 </footer>
-
+<section class="scrool">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="arrow-up-short" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
+        </symbol>
+    </svg>
+    <div class="btn-up btn-up_hide">
+        <svg class="btn-up-icon" role="img" aria-label="Прокрутить страницу к началу">
+        <use xlink:href="#arrow-up-short"></use>
+        </svg>
+    </div>
+    <script src="./static/js/btn_up.js"></script>
+</section>
 </body>
 </html>
