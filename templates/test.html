@@ -7,7 +7,7 @@
     <link href="./static/css/style.css" rel="stylesheet" type="text/css">
     <link href="./static/css/test.css" rel="stylesheet" type="text/css">
     <link href="./static/css/fonts.css" rel="stylesheet" type="text/css">
-    <link href="./static/css/mob.css" media="screen and (max-width: 360px)" rel="stylesheet" type="text/css">
+    <link href="./static/css/mob.css" media="screen and (max-width: 414px)" rel="stylesheet" type="text/css">
     <link rel="icon" sizes="16x16" href="./static/img/Иконка _Лого_ (1_1).svg" type="image/x-icon">
     <title>Vorobeyenglish</title>
 </head>
@@ -17,7 +17,7 @@
     <div class="section">
         <div class="section-header">
             <div class="logo">
-                <a href="./"><img src="./static/img/Иконка _Лого_ (1).svg"></a>
+                <a href="/"><img src="./static/img/Иконка _Лого_ (1).svg"></a>
             </div>
             <nav>
                 <div class="dropdown">
@@ -30,9 +30,9 @@
                             <a href="#"><img class="Name-logo-img-info1 Name-logo-mob3" src="./static/img/Vector (5).svg"></a>
                         </div>
                         <div class="header-nav-mob">
-                            <a class="link" href="./">Главная</a>
-                            <a class="link" href="./#ADVAN_TEST">Преимущества теста</a>
-                            <a class="link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a>
+                            <a class="link" href="">Главная</a>
+                            <a class="link" href="/#ADVAN_TEST">Преимущества теста</a>
+                            <a class="link" href="/#LANGUAGE_LEVELS">Уровни знания языка</a>
                             <form class="dropdown-button-mob" action="./next_test" method="post">
                                 <button class="dropdown-button-mob1">Пройти тест</button>
                             </form>
@@ -43,8 +43,8 @@
                 </div>
 
                 <ul class="header-nav">
-                    <li><a class="link" href="#ADVAN_TEST">Преимущества теста</a></li>
-                    <li><a class="link" href="#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                    <li><a class="link" href="./#ADVAN_TEST">Преимущества теста</a></li>
+                    <li><a class="link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a></li>
                     <li><a class="link" href="mailto:Vorobeyenglish@ya.ru">Свяжитесь с нами</a></li>
                     <!-- <li><a class="link" href="#">О проекте</a></li> -->
                 </ul>
@@ -104,7 +104,7 @@
 
     </div>
 </form>
-{{else}}
+ {{else}}
 
    <form class="quiz-box" id="quiz" action="./test" method="post">
         <div class="quiz-header">
@@ -140,7 +140,7 @@
             </ul>
         </div>
         <div class="button-test">
-            <button class="button test_button" id="submit" disabled>Проверить ответ</button>
+            <button class="button test_button" id="submit" disabled>Отправить</button>
         </div>
     </form>
     {{end}}
@@ -149,7 +149,7 @@
 <footer class="FOOTER">
     <div class="section-footer">
             <div class="footer-logo">
-                <a href="./"><img src="./static/img/Vector (3).svg"></a>
+                <a href=""><img src="./static/img/Vector (3).svg"></a>
                 <p class="footer-logo-p">Image by www.freepik.com</p>
                 <p class="footer-logo-p2">© Vorobey English 2023. Все права защищены</p>
                 <p class="footer-logo-p2" >Проект разработан в рамках Pineapple Practice</p>
@@ -157,8 +157,8 @@
             <div class="footer-navi">
                 <nav>
                     <ul class="footer-nav">
-                        <li><a class="footer-link" href="./#ADVAN_TEST">Преимущества теста</a></li>
-                        <li><a class="footer-link" href="./#LANGUAGE_LEVELS">Уровни знания языка</a></li>
+                        <li><a class="footer-link" href="/#ADVAN_TEST">Преимущества теста</a></li>
+                        <li><a class="footer-link" href="/#LANGUAGE_LEVELS">Уровни знания языка</a></li>
                         <li><a class="footer-link" href="mailto:Vorobeyenglish@ya.ru">Свяжитесь с нами</a></li>
                         <!-- <li><a class="footer-link" href="#">О проекте</a></li> -->
                         <li><p class="mob-1 footer-link">© Vorobey English 2023<br> Все права защищены</p></li>
