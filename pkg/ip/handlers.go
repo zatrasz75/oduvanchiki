@@ -384,7 +384,17 @@ func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var account schema.AccountMail
-	s.Db.First(&account)
+
+	account.Users = os.Getenv("YA_USER")
+	account.Password = os.Getenv("YA_PASSWORD")
+	account.Host = os.Getenv("YA_HOST")
+	account.Addr = os.Getenv("YA_ADDR")
+	account.From = os.Getenv("YA_FROM")
+	account.To = os.Getenv("YA_TO")
+
+	if account.Users == "" || account.Password == "" || account.Host == "" || account.Addr == "" || account.From == "" || account.To == "" {
+		s.Db.First(&account)
+	}
 
 	e := Mail{
 		Name:  r.FormValue("name"),
@@ -398,8 +408,14 @@ func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	// Удаляем случайные пробелы вначале и в конце строки имени
 	name := strings.TrimSpace(e.Name)
 
+	topic := "Проект Vorobey English"
+
+	header := "Subject: " + topic + "\r\n" +
+		"From: " + account.To + "\r\n" +
+		"\r\n"
+
 	if e.Name != "" && e.Emale != "" && e.Bode != "" {
-		msg := []byte("To " + e.Emale + "\r\n" + name + "\r\n" + e.Bode + "\r\n")
+		msg := []byte(header + "От " + e.Emale + "\r\n" + name + "\r\n" + e.Bode + "\r\n")
 
 		auth := smtp.PlainAuth("", account.Users, account.Password, account.Host)
 
