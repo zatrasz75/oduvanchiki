@@ -116,4 +116,4 @@ ALTER TABLE IF EXISTS public.results
 END;
 
 INSERT INTO public.account_mails (id, "from", users, password, host, addr, "to")
-VALUES ('1', 'Vorobeyenglish@ya.ru', 'Vorobeyenglish@ya.ru', '4ff-k9S-47A-5yY', 'smtp.yandex.ru', 'smtp.yandex.ru:587', 'Vorobeyenglish@ya.ru');
+VALUES ('1', 'Vorobeyenglish@ya.ru', 'Vorobeyenglish@ya.ru', 'rgckedihxepudics', 'smtp.yandex.ru', 'smtp.yandex.ru:587', 'Vorobeyenglish@ya.ru');

@@ -81,7 +81,6 @@ var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
-		return
 	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
@@ -105,7 +104,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/next_test" {
 		http.NotFound(w, r)
-		return
 	}
 
 	user := schema.Clientusers{
@@ -150,7 +148,7 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 			errlog.Printf("Не удалось создать запись имени %v\n", recordName.Name)
 		}
 
-		timeT := startTime()
+		timeT := time.Now()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: recordName.Id, Started: timeT}
@@ -197,7 +195,6 @@ func (s *Storage) NextTest(w http.ResponseWriter, r *http.Request) {
 func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/test" {
 		http.NotFound(w, r)
-		return
 	}
 
 	form := FormData{
@@ -234,7 +231,8 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	if cheater == true {
 
 		s.Db.Where("id = ?", quizes.Userid).Find(&user)
-		timeT := startTime()
+
+		timeT := time.Now()
 
 		//Создать запись Quizes
 		recordTest := schema.Quizes{Userid: user.Id, Started: timeT}
@@ -258,7 +256,8 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if form.Questionid != "" && cheater == false {
-		timeT := startTime()
+
+		timeT := time.Now()
 
 		var inputQuestion schema.Quiestions
 		// Извлечение объектов, где поле quiestionid равно form.Questionid
@@ -280,7 +279,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	var point []schema.Results
 	s.Db.Where("quizid = ?", form.TestStart).Find(&point)
 
-	if len(point) == 5 {
+	if len(point) == 60 {
 		display.Available = true
 
 		point := testresult(point)
@@ -310,7 +309,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 	// Извлечение объектов, где поле quizid равно form.TestStart
 	s.Db.Where("quizid = ?", form.TestStart).Find(&resR)
 
-	fmt.Printf("длина нужного массива %v\n", len(resR))
+	fmt.Printf("длина нужного массива %v\n", len(resR)+1)
 
 	var strId int
 
@@ -351,7 +350,7 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 		Point:      result.Point,
 		Level:      display.Level,
 		TestId:     form.TestStart,
-		NumberTest: len(resR),
+		NumberTest: len(resR) + 1,
 		Question:   question.Question,
 		Id:         question.Id,
 		Answer1:    answer.Answer1,
@@ -382,11 +381,20 @@ func (s *Storage) FormTest(w http.ResponseWriter, r *http.Request) {
 func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/connection" {
 		http.NotFound(w, r)
-		return
 	}
 
 	var account schema.AccountMail
-	s.Db.First(&account)
+
+	account.Users = os.Getenv("YA_USER")
+	account.Password = os.Getenv("YA_PASSWORD")
+	account.Host = os.Getenv("YA_HOST")
+	account.Addr = os.Getenv("YA_ADDR")
+	account.From = os.Getenv("YA_FROM")
+	account.To = os.Getenv("YA_TO")
+
+	if account.Users == "" || account.Password == "" || account.Host == "" || account.Addr == "" || account.From == "" || account.To == "" {
+		s.Db.First(&account)
+	}
 
 	e := Mail{
 		Name:  r.FormValue("name"),
@@ -400,8 +408,14 @@ func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 	// Удаляем случайные пробелы вначале и в конце строки имени
 	name := strings.TrimSpace(e.Name)
 
+	topic := "Проект Vorobey English"
+
+	header := "Subject: " + topic + "\r\n" +
+		"From: " + account.To + "\r\n" +
+		"\r\n"
+
 	if e.Name != "" && e.Emale != "" && e.Bode != "" {
-		msg := []byte("To " + e.Emale + "\r\n" + name + "\r\n" + e.Bode + "\r\n")
+		msg := []byte(header + "От " + e.Emale + "\r\n" + name + "\r\n" + e.Bode + "\r\n")
 
 		auth := smtp.PlainAuth("", account.Users, account.Password, account.Host)
 
@@ -464,7 +478,6 @@ func (s *Storage) Connect(w http.ResponseWriter, r *http.Request) {
 func Customer(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/info-customer" {
 		http.NotFound(w, r)
-		return
 	}
 
 	// Используем функцию template.ParseFiles() для чтения файлов шаблона.
@@ -575,18 +588,6 @@ func randomId(allq []schema.Quiestions, resR []schema.Results) (int, error) {
 	return diff[0], nil
 }
 
-// Выводит время +Unix
-func startTime() time.Time {
-
-	tNow := time.Now()
-	//Время для Unix Timestamp
-	tUnix := tNow.Unix()
-	//Временная метка Unix для time.Time
-	time.Unix(tUnix, 0)
-
-	return time.Now()
-}
-
 // Определяет браузер пользователя
 func agentBrowser(ua string) string {
 	var br string
@@ -595,7 +596,7 @@ func agentBrowser(ua string) string {
 	switch true {
 	case strings.Contains(b.FullVersion(), "113.0.0.0"):
 		br = useragent.Chrome
-	case strings.Contains(b.FullVersion(), "110.0.0.0"):
+	case strings.Contains(b.FullVersion(), "112.0.0.0"):
 		br = "Yandex"
 	case strings.Contains(b.FullVersion(), "95.0.0.0"):
 		br = useragent.Opera

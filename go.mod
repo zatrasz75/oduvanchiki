@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/gorilla/mux v1.8.0
+	github.com/joho/godotenv v1.5.1
 	github.com/mileusna/useragent v1.2.1
 	github.com/pattfy/useragent v1.0.0
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
