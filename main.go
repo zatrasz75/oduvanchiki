@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	schema "oduvanchiki/pkg/db"
@@ -23,22 +24,31 @@ const (
 	Users    = "postgres"
 	Password = "rootroot"
 	Dbname   = "Dandelions"
+
+	AppHost = "localhost"
+	AppPort = ":4000"
 )
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 var inflog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
 var (
-	// Подключение к БД
-	conStr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", Host, Port, Users, Password, Dbname)
+	// Подключение к БД postgresql://localhost:5432/Dandelions
+	constr = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", Host, Port, Users, Password, Dbname)
 )
 
 func main() {
-	// Соединение с БД.
-	s, err := ip.New(conStr)
-	if err != nil {
-		panic("не удалось подключить базу данных")
+	if err := godotenv.Load(); err != nil {
+		log.Printf("системе не удается найти указанный файл .env -  %s", err)
 	}
+
+	connStr := os.Getenv("DB_CONNECTION_STRING")
+	if connStr == "" {
+		connStr = constr
+	}
+	fmt.Println(connStr)
+	// Соединение с БД.
+	s, err := ip.New(connStr)
 	if err != nil {
 		errlog.Fatal("Нет подключения к БД \n", err.Error())
 	}
@@ -132,7 +142,15 @@ func main() {
 
 	//---------------------------------------------------------
 
-	PORT := ":4000"
+	HOST := os.Getenv("APP_IP")
+	if HOST == "" {
+		HOST = AppHost
+	}
+
+	PORT := os.Getenv("APP_PORT")
+	if PORT == "" {
+		PORT = AppPort
+	}
 
 	// Инициализируем FileServer, он будет обрабатывать
 	// HTTP-запросы к статическим файлам из папки "./static".
@@ -144,9 +162,9 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         PORT,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
+		Addr:         HOST + ":" + PORT,
+		ReadTimeout:  3 * time.Second,
+		WriteTimeout: 3 * time.Second,
 	}
 
 	router.HandleFunc("/", ip.Home).Methods("GET")
@@ -155,11 +173,11 @@ func main() {
 	router.HandleFunc("/info-customer", ip.Customer).Methods("GET")
 	router.HandleFunc("/connection", s.Connect).Methods("POST")
 
-	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
+	inflog.Print("Запуск сервера на http://" + HOST + ":" + PORT)
 
 	// Запуск сервера в горутине
 	go func() {
-		if err := srv.ListenAndServe(); err != nil {
+		if err = srv.ListenAndServe(); err != nil {
 			inflog.Println(err)
 		}
 	}()
