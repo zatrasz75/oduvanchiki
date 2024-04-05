@@ -25,6 +25,7 @@ const (
 	Password = "rootroot"
 	Dbname   = "Dandelions"
 
+	AppHost = "localhost"
 	AppPort = ":4000"
 )
 
@@ -41,7 +42,7 @@ func main() {
 		log.Printf("системе не удается найти указанный файл .env -  %s", err)
 	}
 
-	connStr := os.Getenv("CONN_STR")
+	connStr := os.Getenv("DB_CONNECTION_STRING")
 	if connStr == "" {
 		connStr = constr
 	}
@@ -141,6 +142,11 @@ func main() {
 
 	//---------------------------------------------------------
 
+	HOST := os.Getenv("APP_IP")
+	if HOST == "" {
+		HOST = AppHost
+	}
+
 	PORT := os.Getenv("APP_PORT")
 	if PORT == "" {
 		PORT = AppPort
@@ -156,7 +162,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         PORT,
+		Addr:         HOST + ":" + PORT,
 		ReadTimeout:  3 * time.Second,
 		WriteTimeout: 3 * time.Second,
 	}
@@ -167,7 +173,7 @@ func main() {
 	router.HandleFunc("/info-customer", ip.Customer).Methods("GET")
 	router.HandleFunc("/connection", s.Connect).Methods("POST")
 
-	inflog.Print("Запуск сервера на http://127.0.0.1", PORT)
+	inflog.Print("Запуск сервера на http://" + HOST + ":" + PORT)
 
 	// Запуск сервера в горутине
 	go func() {
