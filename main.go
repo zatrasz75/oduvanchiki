@@ -42,7 +42,7 @@ func main() {
 		log.Printf("системе не удается найти указанный файл .env -  %s", err)
 	}
 
-	connStr := os.Getenv("CONN_STR")
+	connStr := os.Getenv("DB_CONNECTION_STRING")
 	if connStr == "" {
 		connStr = constr
 	}
