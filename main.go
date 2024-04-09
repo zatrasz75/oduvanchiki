@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	schema "oduvanchiki/pkg/db"
@@ -15,6 +14,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
+
 	"github.com/gorilla/mux"
 )
 
@@ -22,11 +23,11 @@ const (
 	Host     = "localhost"
 	Port     = 5432
 	Users    = "postgres"
-	Password = "rootroot"
+	Password = "root"
 	Dbname   = "Dandelions"
 
 	AppHost = "localhost"
-	AppPort = ":4000"
+	AppPort = "4000"
 )
 
 var errlog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
