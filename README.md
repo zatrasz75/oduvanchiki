@@ -1,5 +1,5 @@
 <p align="center">
-<img  src="./static/img/Иконка _Лого_ (1_1).svg" width="40%">
+<img  src="./static/img/Logo1_1.svg" width="40%">
 </p>
 
 # [“Тест для определения уровня владения английским языком”](http://vorobeyenglish.ru/)
